@@ -847,17 +847,28 @@ async function sendMonthlyPlanning() {
   showToast('✅', 'Planificación enviada');
 }
 
-function generateEmailHTML(month, items, notes) {
-  let html = `<h3>Planificación ${monthNames[month]} 2026</h3>`;
-  html += `<p>Total: ${items.length} verificaciones</p><table style="border-collapse:collapse;width:100%">`;
-  html += `<tr style="background:#f0f0f0"><th style="padding:8px;border:1px solid #ddd">Equipo</th><th style="padding:8px;border:1px solid #ddd">Código</th><th style="padding:8px;border:1px solid #ddd">Frec</th><th style="padding:8px;border:1px solid #ddd">Estado</th></tr>`;
-  items.forEach(t => {
-    html += `<tr><td style="padding:8px;border:1px solid #ddd">${t.name}</td><td style="padding:8px;border:1px solid #ddd">${t.code}</td><td style="padding:8px;border:1px solid #ddd">${t.freq}m</td><td style="padding:8px;border:1px solid #ddd">${t.status}</td></tr>`;
-  });
-  html += `</table>`;
-  if (notes) html += `<p><strong>Notas:</strong> ${notes}</p>`;
-  return html;
-}
+<!-- Configuración EmailJS -->
+<div class="email-config">
+  <h4>⚙️ Configuración EmailJS</h4>
+  <p style="font-size:.7rem;color:var(--text3);margin-bottom:10px;">
+    Regístrate en <a href="https://emailjs.com" target="_blank" style="color:var(--blue);">emailjs.com</a>
+  </p>
+  <div class="config-row">
+    <input type="text" id="emailjsPublicKey" placeholder="Public Key (user_...)" 
+           value="" style="flex:2;min-width:200px">
+    <input type="text" id="emailjsServiceId" placeholder="Service ID" 
+           value="service_five7e8" style="flex:1;min-width:120px">
+    <input type="text" id="emailjsTemplateId" placeholder="Template ID" 
+           value="template_jev4pzj" style="flex:1;min-width:120px">
+  </div>
+  <div style="display:flex;gap:8px;margin-top:8px">
+    <button class="btn btn-sm btn-primary" onclick="saveEmailConfigFromUI()">💾 Guardar Configuración</button>
+    <button class="btn btn-sm" onclick="testEmailConfig()">🧪 Probar Conexión</button>
+  </div>
+  <p style="font-size:.65rem;color:var(--text3);margin-top:8px">
+    💡 Obtén tu Public Key en: EmailJS Dashboard → Account → API Keys
+  </p>
+</div>
 
 function updateEmailPreview() {
   const month = parseInt(document.getElementById('notifyMonth').value);
@@ -995,7 +1006,85 @@ function exportRequests() {
   downloadFile(csv, 'solicitudes.csv', 'text/csv');
   showToast('📥', 'Exportado');
 }
+function saveEmailConfigFromUI() {
+  const publicKey = document.getElementById('emailjsPublicKey').value.trim();
+  const serviceId = document.getElementById('emailjsServiceId').value.trim();
+  const templateId = document.getElementById('emailjsTemplateId').value.trim();
+  
+  // Validaciones
+  if (!publicKey) {
+    showToast('⚠️', 'La Public Key es OBLIGATORIA. Obténla en EmailJS Dashboard → Account → API Keys');
+    return false;
+  }
+  if (!serviceId) {
+    showToast('⚠️', 'Service ID es obligatorio');
+    return false;
+  }
+  if (!templateId) {
+    showToast('⚠️', 'Template ID es obligatorio');
+    return false;
+  }
+  
+  // Guardar en localStorage
+  localStorage.setItem('emailjs_publicKey', publicKey);
+  localStorage.setItem('emailjs_serviceId', serviceId);
+  localStorage.setItem('emailjs_templateId', templateId);
+  
+  // Actualizar configuración
+  EMAILJS_CONFIG = { publicKey, serviceId, templateId };
+  
+  // Re-inicializar EmailJS
+  emailjs.init({
+    publicKey: publicKey,
+    blockHeadless: false,
+    limitRate: { throttle: 5000 }
+  });
+  
+  console.log('✅ EmailJS configurado:', { 
+    publicKey: publicKey.substring(0, 10) + '...',
+    serviceId, 
+    templateId 
+  });
+  
+  showToast('✅', 'Configuración guardada correctamente. ¡Listo para enviar emails!');
+  return true;
+}
 
+function testEmailConfig() {
+  const publicKey = document.getElementById('emailjsPublicKey')?.value.trim() || 
+                    localStorage.getItem('emailjs_publicKey');
+  
+  if (!publicKey) {
+    showToast('⚠️', 'Primero ingresa y guarda tu Public Key');
+    return;
+  }
+  
+  showToast('🧪', 'Enviando email de prueba...');
+  
+  emailjs.send(
+    EMAILJS_CONFIG.serviceId,
+    EMAILJS_CONFIG.templateId,
+    {
+      to_email: currentUser?.email || 'm3tr0l0giadisal@gmail.com',
+      subject: '🧪 Prueba de Conexión - Verificación Tanques',
+      message: '✅ Configuración exitosa. El sistema de notificaciones está funcionando.',
+      from_name: 'Sistema Verificación Grupo Disal'
+    }
+  )
+  .then(response => {
+    console.log('✅ Email enviado:', response);
+    showToast('✅', '¡Conexión exitosa! Revisa tu bandeja de entrada.');
+  })
+  .catch(err => {
+    console.error('❌ Error:', err);
+    let msg = 'Error: ';
+    if (err.text) msg += err.text;
+    else if (err.status) msg += `HTTP ${err.status}`;
+    else msg += 'Verifica tus credenciales';
+    showToast('❌', msg);
+  });
+}
+  
 // ============================================================
 // PDF GENERATION
 // ============================================================
