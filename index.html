@@ -91,18 +91,15 @@
   }
 
   /* HEADER */
-  .header {
-    background:linear-gradient(135deg, var(--disal-secondary) 0%, var(--disal-primary) 100%);
-    border-bottom:1px solid var(--border); padding:14px 24px;
-    display:flex; align-items:center; justify-content:space-between;
-    position:sticky; top:0; z-index:100; backdrop-filter:blur(10px);
-  }
-  .header-left { display:flex; align-items:center; gap:12px; }
-  .header .logo-text { 
-    font-size:1.1rem; font-weight:700; 
-    background:linear-gradient(90deg,var(--cyan),var(--blue));
-    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-  }
+.header {
+  background: linear-gradient(135deg, var(--disal-blue-dark) 0%, var(--disal-blue) 100%);
+  border-bottom: 3px solid var(--disal-orange);
+}
+
+.header .logo-text {
+  background: linear-gradient(90deg, #fff var(--disal-blue-light));
+  -webkit-background-clip: text;
+}
   .header .badge { background:var(--red); color:#fff; font-size:.65rem; padding:2px 8px; border-radius:12px; font-weight:600; animation:pulse 2s infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.6} }
   .header-right { display:flex; align-items:center; gap:10px; }
