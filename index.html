@@ -563,6 +563,49 @@ let EMAILJS_CONFIG = {
   publicKey: localStorage.getItem('emailjs_publicKey') || 'TU_PUBLIC_KEY_AQUI'
 };
 
+// Función para enviar planificación de pesaje
+async function sendWeighingPlanning(month, recipients, notes = '') {
+  const equipments = tanksData.filter(t => t.month === month && t.category === 'pesaje');
+  
+  if (equipments.length === 0) {
+    showToast('ℹ️', 'No hay equipos de pesaje programados para este mes');
+    return;
+  }
+  
+  const tableRows = generatePlanningTableRows(equipments);
+  const statusCounts = {
+    green: equipments.filter(e => e.status === 'green').length,
+    yellow: equipments.filter(e => e.status === 'yellow').length,
+    red: equipments.filter(e => e.status === 'red').length
+  };
+  
+  const emailData = {
+    subject: `📅 Planificación Pesaje - ${monthNames[month]} 2026`,
+    month_name: monthNames[month],
+    year: '2026',
+    total_equips: equipments.length,
+    planning_table: tableRows,
+    notes: notes,
+    sender_name: currentUser?.name || 'Sistema Metrología',
+    contact_email: 'm3tr0l0giadisal@gmail.com',
+    // Contadores para KPIs (si tu template los usa)
+    count_green: statusCounts.green,
+    count_yellow: statusCounts.yellow,
+    count_red: statusCounts.red
+  };
+  
+  showToast('📤', `Enviando a ${recipients.length} destinatario(s)...`);
+  
+  for (const to of recipients) {
+    await emailjs.send(EMAILJS_CONFIG.serviceId, EMAILJS_CONFIG.templateId, {
+      ...emailData,
+      to_email: to
+    });
+  }
+  
+  showToast('✅', `Planificación de ${monthNames[month]} enviada`);
+}
+  
 // ============================================================
 // DATA: PLANIFICACIÓN 2026
 // ============================================================
