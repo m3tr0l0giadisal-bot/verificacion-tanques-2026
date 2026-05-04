@@ -1,0 +1,1591 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📊 Planificación 2026 – Verificación Interna de Tanques</title>
+<style>
+  :root {
+    --bg: #0a0e17;
+    --card: #111827;
+    --card2: #1a2235;
+    --border: #1e2a3a;
+    --green: #00e676;
+    --green-dim: #00c853;
+    --yellow: #ffd600;
+    --yellow-dim: #f9a825;
+    --red: #ff1744;
+    --red-dim: #d50000;
+    --orange: #ff6d00;
+    --blue: #448aff;
+    --cyan: #00e5ff;
+    --purple: #d500f9;
+    --text: #e0e6f0;
+    --text2: #8892a4;
+    --text3: #5a6478;
+    --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, #0d1520 0%, #1a2744 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 18px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+  }
+
+  .header h1 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, var(--cyan), var(--blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .header .badge {
+    background: var(--red);
+    color: #fff;
+    font-size: .7rem;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: .6; }
+  }
+
+  .header-right {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .header-right .date-display {
+    color: var(--text2);
+    font-size: .8rem;
+  }
+
+  .btn {
+    padding: 7px 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--card2);
+    color: var(--text);
+    cursor: pointer;
+    font-size: .78rem;
+    transition: all .2s;
+  }
+
+  .btn:hover { background: var(--blue); border-color: var(--blue); color: #fff; }
+
+  .btn-primary {
+    background: var(--blue);
+    border-color: var(--blue);
+    color: #fff;
+  }
+
+  .btn-danger {
+    background: var(--red);
+    border-color: var(--red);
+    color: #fff;
+  }
+
+  /* MAIN */
+  .main {
+    padding: 24px 30px;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+
+  /* KPI CARDS */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .kpi {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: transform .2s, box-shadow .2s;
+  }
+
+  .kpi:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(0,0,0,.4);
+  }
+
+  .kpi .kpi-icon {
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+  }
+
+  .kpi .kpi-value {
+    font-size: 2rem;
+    font-weight: 800;
+  }
+
+  .kpi .kpi-label {
+    color: var(--text2);
+    font-size: .78rem;
+    margin-top: 2px;
+  }
+
+  .kpi .kpi-trend {
+    font-size: .72rem;
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .kpi .kpi-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    border-radius: 0 0 14px 14px;
+  }
+
+  .kpi-green .kpi-value { color: var(--green); }
+  .kpi-green .kpi-bar { background: var(--green); width: 100%; }
+
+  .kpi-yellow .kpi-value { color: var(--yellow); }
+  .kpi-yellow .kpi-bar { background: var(--yellow); width: 65%; }
+
+  .kpi-red .kpi-value { color: var(--red); }
+  .kpi-red .kpi-bar { background: var(--red); width: 25%; }
+
+  .kpi-blue .kpi-value { color: var(--blue); }
+  .kpi-blue .kpi-bar { background: var(--blue); width: 80%; }
+
+  .kpi-cyan .kpi-value { color: var(--cyan); }
+  .kpi-cyan .kpi-bar { background: var(--cyan); width: 90%; }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 20px;
+    background: var(--card);
+    border-radius: 12px;
+    padding: 4px;
+    border: 1px solid var(--border);
+    overflow-x: auto;
+  }
+
+  .tab {
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: .8rem;
+    font-weight: 600;
+    color: var(--text2);
+    transition: all .2s;
+    white-space: nowrap;
+    border: none;
+    background: transparent;
+  }
+
+  .tab:hover { color: var(--text); background: var(--card2); }
+
+  .tab.active {
+    background: var(--blue);
+    color: #fff;
+  }
+
+  .tab .tab-count {
+    background: rgba(255,255,255,.15);
+    padding: 1px 7px;
+    border-radius: 10px;
+    font-size: .65rem;
+    margin-left: 6px;
+  }
+
+  .tab.active .tab-count { background: rgba(255,255,255,.25); }
+
+  /* PANELS */
+  .panel {
+    display: none;
+  }
+
+  .panel.active {
+    display: block;
+  }
+
+  /* SEMÁFORO GRID */
+  .semaforo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+
+  .semaforo-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    position: relative;
+    transition: all .3s;
+    cursor: pointer;
+  }
+
+  .semaforo-card:hover {
+    border-color: var(--blue);
+    box-shadow: 0 4px 20px rgba(68,138,255,.15);
+  }
+
+  .semaforo-card .status-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    position: absolute;
+    top: 14px;
+    right: 14px;
+  }
+
+  .dot-green { background: var(--green); box-shadow: 0 0 10px var(--green); }
+  .dot-yellow { background: var(--yellow); box-shadow: 0 0 10px var(--yellow); }
+  .dot-red { background: var(--red); box-shadow: 0 0 10px var(--red); animation: pulse 1.5s infinite; }
+  .dot-blue { background: var(--blue); box-shadow: 0 0 10px var(--blue); }
+
+  .semaforo-card .tk-name {
+    font-weight: 700;
+    font-size: .95rem;
+    margin-bottom: 2px;
+  }
+
+  .semaforo-card .tk-code {
+    color: var(--text2);
+    font-size: .72rem;
+    font-family: monospace;
+    margin-bottom: 10px;
+  }
+
+  .semaforo-card .tk-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .semaforo-card .tk-meta-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: .74rem;
+    color: var(--text2);
+  }
+
+  .semaforo-card .tk-meta-row span:last-child {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .semaforo-card .tk-tags {
+    display: flex;
+    gap: 5px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-size: .65rem;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-weight: 600;
+  }
+
+  .tag-freq3 { background: rgba(255,23,68,.15); color: var(--red); border: 1px solid rgba(255,23,68,.3); }
+  .tag-freq6 { background: rgba(0,230,118,.15); color: var(--green); border: 1px solid rgba(0,230,118,.3); }
+  .tag-alert { background: rgba(255,214,0,.15); color: var(--yellow); border: 1px solid rgba(255,214,0,.3); }
+  .tag-dev { background: rgba(255,109,0,.15); color: var(--orange); border: 1px solid rgba(255,109,0,.3); }
+
+  /* CALENDAR / MONTHLY VIEW */
+  .monthly-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+  }
+
+  .month-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: all .2s;
+  }
+
+  .month-card:hover {
+    border-color: var(--blue);
+  }
+
+  .month-header {
+    padding: 14px 18px;
+    font-weight: 700;
+    font-size: .9rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .month-header .month-count {
+    background: var(--card2);
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-size: .72rem;
+    color: var(--text2);
+  }
+
+  .month-body {
+    padding: 10px 18px 14px;
+  }
+
+  .month-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,.04);
+    font-size: .78rem;
+  }
+
+  .month-item:last-child { border-bottom: none; }
+
+  .month-item .item-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .month-item .item-name {
+    flex: 1;
+    font-weight: 600;
+  }
+
+  .month-item .item-code {
+    font-family: monospace;
+    color: var(--text2);
+    font-size: .7rem;
+  }
+
+  /* ALERTS */
+  .alerts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .alert-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    transition: all .2s;
+  }
+
+  .alert-item:hover {
+    background: var(--card2);
+  }
+
+  .alert-item .alert-icon {
+    font-size: 1.3rem;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .alert-item .alert-content { flex: 1; }
+
+  .alert-item .alert-title {
+    font-weight: 700;
+    font-size: .85rem;
+    margin-bottom: 3px;
+  }
+
+  .alert-item .alert-desc {
+    color: var(--text2);
+    font-size: .76rem;
+    line-height: 1.5;
+  }
+
+  .alert-item .alert-time {
+    color: var(--text3);
+    font-size: .7rem;
+    white-space: nowrap;
+  }
+
+  .alert-critical { border-left: 3px solid var(--red); }
+  .alert-warning { border-left: 3px solid var(--yellow); }
+  .alert-info { border-left: 3px solid var(--blue); }
+
+  /* CHART AREA */
+  .chart-container {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .chart-title {
+    font-weight: 700;
+    font-size: .9rem;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .chart-area {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    height: 200px;
+    padding: 0 10px;
+  }
+
+  .chart-bar-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    justify-content: flex-end;
+  }
+
+  .chart-bar {
+    width: 100%;
+    max-width: 40px;
+    border-radius: 4px 4px 0 0;
+    transition: height .5s ease;
+    position: relative;
+    cursor: pointer;
+    min-height: 4px;
+  }
+
+  .chart-bar:hover {
+    opacity: .8;
+    filter: brightness(1.2);
+  }
+
+  .chart-bar .bar-tooltip {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--card2);
+    border: 1px solid var(--border);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: .68rem;
+    white-space: nowrap;
+    z-index: 10;
+  }
+
+  .chart-bar:hover .bar-tooltip { display: block; }
+
+  .chart-label {
+    font-size: .62rem;
+    color: var(--text3);
+    margin-top: 6px;
+    text-align: center;
+  }
+
+  /* DONUT */
+  .donut-container {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    flex-wrap: wrap;
+  }
+
+  .donut-wrap {
+    position: relative;
+    width: 160px;
+    height: 160px;
+  }
+
+  .donut-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+
+  .donut-center .donut-value {
+    font-size: 1.8rem;
+    font-weight: 800;
+  }
+
+  .donut-center .donut-label {
+    font-size: .7rem;
+    color: var(--text2);
+  }
+
+  .donut-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: .78rem;
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  /* TABLE */
+  .table-wrap {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .78rem;
+  }
+
+  thead {
+    background: var(--card2);
+  }
+
+  th {
+    padding: 12px 14px;
+    text-align: left;
+    font-weight: 700;
+    color: var(--text2);
+    font-size: .72rem;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 11px 14px;
+    border-bottom: 1px solid rgba(255,255,255,.04);
+    white-space: nowrap;
+  }
+
+  tr:hover td { background: rgba(68,138,255,.05); }
+
+  .status-badge {
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: .68rem;
+    font-weight: 700;
+    display: inline-block;
+  }
+
+  .status-on-track { background: rgba(0,230,118,.15); color: var(--green); }
+  .status-warning { background: rgba(255,214,0,.15); color: var(--yellow); }
+  .status-overdue { background: rgba(255,23,68,.15); color: var(--red); }
+  .status-pending { background: rgba(68,138,255,.15); color: var(--blue); }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,.7);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-overlay.show { display: flex; }
+
+  .modal {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    width: 90%;
+    max-width: 520px;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .modal h2 {
+    font-size: 1.1rem;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .modal .close-btn {
+    position: absolute;
+    top: 16px;
+    right: 18px;
+    background: none;
+    border: none;
+    color: var(--text2);
+    font-size: 1.2rem;
+    cursor: pointer;
+  }
+
+  .modal .close-btn:hover { color: var(--text); }
+
+  .form-group {
+    margin-bottom: 14px;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: .75rem;
+    color: var(--text2);
+    margin-bottom: 5px;
+    font-weight: 600;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: 9px 12px;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: .8rem;
+    font-family: var(--font);
+  }
+
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(68,138,255,.15);
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  /* FILTER BAR */
+  .filter-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .filter-bar input,
+  .filter-bar select {
+    padding: 8px 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: .78rem;
+    font-family: var(--font);
+  }
+
+  .filter-bar input:focus,
+  .filter-bar select:focus {
+    outline: none;
+    border-color: var(--blue);
+  }
+
+  .filter-bar .search-input {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  /* PROGRESS BAR */
+  .progress-bar {
+    height: 6px;
+    background: var(--card2);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 6px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width .5s ease;
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text3); }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .main { padding: 16px; }
+    .kpi-row { grid-template-columns: repeat(2, 1fr); }
+    .semaforo-grid { grid-template-columns: 1fr; }
+    .monthly-grid { grid-template-columns: 1fr; }
+    .header { padding: 14px 16px; }
+    .header h1 { font-size: 1rem; }
+    .form-row { grid-template-columns: 1fr; }
+    .donut-container { flex-direction: column; }
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .panel.active { animation: fadeIn .3s ease; }
+
+  .notification-toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 300;
+    box-shadow: 0 10px 40px rgba(0,0,0,.5);
+    animation: slideIn .3s ease;
+    font-size: .8rem;
+  }
+
+  @keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+  .compliance-meter {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 10px;
+  }
+
+  .meter-ring {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: .85rem;
+    border: 3px solid;
+  }
+
+  .meter-info .meter-label {
+    font-size: .72rem;
+    color: var(--text2);
+  }
+
+  .meter-info .meter-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+
+  /* Export buttons */
+  .export-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    justify-content: flex-end;
+  }
+
+  .section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px;
+    color: var(--text3);
+  }
+
+  .empty-state .empty-icon {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <h1>📊 Verificación Interna de Tanques 2026</h1>
+    <span class="badge" id="activeAlertsBadge">5 Alertas</span>
+  </div>
+  <div class="header-right">
+    <span class="date-display" id="currentDate"></span>
+    <button class="btn" onclick="openModal()">➕ Registrar Verificación</button>
+    <button class="btn" onclick="exportData()">📥 Exportar</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- KPI ROW -->
+  <div class="kpi-row" id="kpiRow">
+    <!-- Filled by JS -->
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs" id="tabBar">
+    <button class="tab active" data-tab="semaforo">🚦 Semáforo <span class="tab-count" id="countSemaforo">36</span></button>
+    <button class="tab" data-tab="calendar">📅 Calendario</button>
+    <button class="tab" data-tab="alerts">🔔 Alertas <span class="tab-count" id="countAlerts">5</span></button>
+    <button class="tab" data-tab="dashboard">📈 Dashboard</button>
+    <button class="tab" data-tab="table">📋 Tabla Completa</button>
+  </div>
+
+  <!-- PANEL: SEMÁFORO -->
+  <div class="panel active" id="panel-semaforo">
+    <div class="filter-bar">
+      <input type="text" class="search-input" placeholder="🔍 Buscar tanque, código..." id="searchSemaforo" oninput="filterSemaforo()">
+      <select id="filterStatus" onchange="filterSemaforo()">
+        <option value="all">Todos los estados</option>
+        <option value="green">✅ En plazo</option>
+        <option value="yellow">⚠️ Atención</option>
+        <option value="red">🔴 Desvío</option>
+        <option value="blue">🔵 Frecuencia 3m</option>
+      </select>
+      <select id="filterMonth" onchange="filterSemaforo()">
+        <option value="all">Todos los meses</option>
+        <option value="1">Enero</option><option value="2">Febrero</option>
+        <option value="3">Marzo</option><option value="4">Abril</option>
+        <option value="5">Mayo</option><option value="6">Junio</option>
+        <option value="7">Julio</option><option value="8">Agosto</option>
+        <option value="9">Septiembre</option><option value="10">Octubre</option>
+        <option value="11">Noviembre</option><option value="12">Diciembre</option>
+      </select>
+      <select id="filterType" onchange="filterSemaforo()">
+        <option value="all">Todos los tipos</option>
+        <option value="LatBco">Látex Blanco</option>
+        <option value="TER">TER</option>
+        <option value="Sint">Sintético</option>
+        <option value="Reactor">Reactor</option>
+        <option value="Otro">Otros</option>
+      </select>
+    </div>
+    <div class="semaforo-grid" id="semaforoGrid">
+      <!-- Filled by JS -->
+    </div>
+  </div>
+
+  <!-- PANEL: CALENDAR -->
+  <div class="panel" id="panel-calendar">
+    <div class="section-title">📅 Distribución Mensual 2026</div>
+    <div class="monthly-grid" id="monthlyGrid">
+      <!-- Filled by JS -->
+    </div>
+  </div>
+
+  <!-- PANEL: ALERTS -->
+  <div class="panel" id="panel-alerts">
+    <div class="section-title">🔔 Alertas y Desvíos de Cumplimiento</div>
+    <div class="filter-bar">
+      <select id="filterAlertLevel" onchange="filterAlerts()">
+        <option value="all">Todos los niveles</option>
+        <option value="critical">🔴 Crítico</option>
+        <option value="warning">🟡 Advertencia</option>
+        <option value="info">🔵 Informativo</option>
+      </select>
+    </div>
+    <div class="alerts-list" id="alertsList">
+      <!-- Filled by JS -->
+    </div>
+  </div>
+
+  <!-- PANEL: DASHBOARD -->
+  <div class="panel" id="panel-dashboard">
+    <div class="section-title">📈 Dashboard de Cumplimiento</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:16px;">
+      <div class="chart-container">
+        <div class="chart-title">📊 Carga Mensual de Verificaciones</div>
+        <div class="chart-area" id="monthlyChart"></div>
+      </div>
+      <div class="chart-container">
+        <div class="chart-title">🎯 Distribución por Estado</div>
+        <div class="donut-container" id="donutContainer"></div>
+      </div>
+      <div class="chart-container">
+        <div class="chart-title">📈 Cumplimiento por Tipo de Equipo</div>
+        <div class="chart-area" id="typeChart"></div>
+      </div>
+      <div class="chart-container">
+        <div class="chart-title">⏱️ Progreso Anual</div>
+        <div id="progressSection"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL: TABLE -->
+  <div class="panel" id="panel-table">
+    <div class="section-title">📋 Tabla Completa de Planificación</div>
+    <div class="export-bar">
+      <button class="btn" onclick="exportCSV()">📄 Exportar CSV</button>
+      <button class="btn" onclick="exportJSON()">📦 Exportar JSON</button>
+    </div>
+    <div class="table-wrap">
+      <table id="fullTable">
+        <thead>
+          <tr>
+            <th>Equipo</th>
+            <th>Código</th>
+            <th>Tipo</th>
+            <th>Mes</th>
+            <th>Frecuencia</th>
+            <th>Estado</th>
+            <th>Observaciones</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <!-- Filled by JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <button class="close-btn" onclick="closeModalDirect()">✕</button>
+    <h2>📝 Registrar Verificación</h2>
+    <div class="form-group">
+      <label>Tanque / Equipo</label>
+      <select id="modalTank">
+        <option value="">Seleccionar...</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Fecha de Verificación</label>
+        <input type="date" id="modalDate">
+      </div>
+      <div class="form-group">
+        <label>Resultado</label>
+        <select id="modalResult">
+          <option value="ok">✅ Conforme</option>
+          <option value="adj">🔧 Con Ajuste</option>
+          <option value="dev">⚠️ Desvío</option>
+          <option value="fail">🔴 Fuera de Tolerancia</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Observaciones</label>
+      <textarea id="modalNotes" rows="3" placeholder="Detalles de la verificación..."></textarea>
+    </div>
+    <div class="form-group">
+      <label>Próxima Verificación Sugerida</label>
+      <input type="date" id="modalNextDate">
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-top:8px;padding:12px;" onclick="saveVerification()">💾 Guardar Registro</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="notification-toast" id="toast" style="display:none;">
+  <span id="toastIcon">✅</span>
+  <span id="toastMsg"></span>
+</div>
+
+<script>
+// ============================================================
+// DATA: 2026 PLANNING
+// ============================================================
+const tanksData = [
+  // ENERO-FEBRERO
+  { name:"TK3 Látex Blanco", code:"00582", month:1, freq:6, status:"green", type:"LatBco", obs:"Backlog 2025" },
+  { name:"TK6 Látex Blanco", code:"00627", month:2, freq:6, status:"green", type:"LatBco", obs:"Backlog 2025" },
+  { name:"TK3 TER", code:"00663", month:1, freq:6, status:"green", type:"TER", obs:"Inicio ciclo" },
+  { name:"TK4 TER", code:"00664", month:2, freq:6, status:"green", type:"TER", obs:"Inicio ciclo" },
+  // MARZO
+  { name:"TK2 Látex Blanco", code:"00593", month:3, freq:6, status:"green", type:"LatBco", obs:"" },
+  { name:"TK5 Látex Blanco", code:"00626", month:3, freq:6, status:"green", type:"LatBco", obs:"" },
+  { name:"TK N3 Látex Color", code:"00644", month:3, freq:6, status:"green", type:"LatBco", obs:"" },
+  { name:"TKN3 Sintético", code:"00643", month:3, freq:6, status:"green", type:"Sint", obs:"" },
+  { name:"TKN5 Sintético", code:"00652", month:3, freq:6, status:"green", type:"Sint", obs:"" },
+  // ABRIL
+  { name:"TK1 Látex Blanco", code:"00592", month:4, freq:6, status:"yellow", type:"LatBco", obs:"⚠️ Alto historial – seguimiento" },
+  { name:"TK4 Látex Blanco", code:"00700", month:4, freq:3, status:"red", type:"LatBco", obs:"🔴 Desvíos previos → frecuencia reforzada" },
+  { name:"TK5 TER", code:"00665", month:4, freq:3, status:"red", type:"TER", obs:"🔴 Desvíos previos → frecuencia reforzada" },
+  { name:"TKN2 Sintético", code:"00650", month:4, freq:6, status:"green", type:"Sint", obs:"" },
+  { name:"Reactor 1 Resinas", code:"00601", month:4, freq:6, status:"green", type:"Reactor", obs:"" },
+  // MAYO
+  { name:"TK6 TER", code:"00666", month:5, freq:3, status:"red", type:"TER", obs:"🔴 Desvíos previos → frecuencia reforzada" },
+  { name:"TKN7 Sintético", code:"00653", month:5, freq:6, status:"green", type:"Sint", obs:"" },
+  { name:"TKN12 Sintético", code:"00659", month:5, freq:6, status:"green", type:"Sint", obs:"" },
+  { name:"Reactor 2", code:"00141", month:5, freq:6, status:"green", type:"Reactor", obs:"" },
+  { name:"TK2-101", code:"00146", month:5, freq:6, status:"green", type:"Otro", obs:"" },
+  // JUNIO
+  { name:"TK N6 Sintético", code:"00640", month:6, freq:6, status:"green", type:"Sint", obs:"" },
+  { name:"TKN8 Sintético", code:"00654", month:6, freq:6, status:"green", type:"Sint", obs:"" },
+  { name:"TKN9 Sintético", code:"00655", month:6, freq:6, status:"green", type:"Sint", obs:"" },
+  { name:"TK2-201", code:"00145", month:6, freq:6, status:"green", type:"Otro", obs:"" },
+  { name:"Reactor 1", code:"00142", month:6, freq:6, status:"green", type:"Reactor", obs:"" },
+  // JULIO (ciclo 2)
+  { name:"TK3 Látex Blanco", code:"00582", month:7, freq:6, status:"green", type:"LatBco", obs:"2° ciclo" },
+  { name:"TK6 Látex Blanco", code:"00627", month:7, freq:6, status:"green", type:"LatBco", obs:"2° ciclo" },
+  { name:"TK3 TER", code:"00663", month:7, freq:6, status:"green", type:"TER", obs:"2° ciclo" },
+  { name:"TK4 TER", code:"00664", month:7, freq:6, status:"green", type:"TER", obs:"2° ciclo" },
+  { name:"TKN4 Sintético", code:"00651", month:7, freq:6, status:"green", type:"Sint", obs:"Nuevo ingreso ciclo 2" },
+  // AGOSTO
+  { name:"TK2 Látex Blanco", code:"00593", month:8, freq:6, status:"green", type:"LatBco", obs:"2° ciclo" },
+  { name:"TK5 Látex Blanco", code:"00626", month:8, freq:6, status:"green", type:"LatBco", obs:"2° ciclo" },
+  { name:"TK N3 Látex Color", code:"00644", month:8, freq:6, status:"green", type:"LatBco", obs:"2° ciclo" },
+  { name:"TKN3 Sintético", code:"00643", month:8, freq:6, status:"green", type:"Sint", obs:"2° ciclo" },
+  { name:"Reactor 2 Resinas", code:"00602", month:8, freq:6, status:"green", type:"Reactor", obs:"" },
+  // SEPTIEMBRE
+  { name:"TK1 Látex Blanco", code:"00592", month:9, freq:6, status:"yellow", type:"LatBco", obs:"⚠️ Alto historial – seguimiento" },
+  { name:"TK4 Látex Blanco", code:"00700", month:9, freq:3, status:"red", type:"LatBco", obs:"🔴 Refuerzo continuo" },
+  { name:"TK5 TER", code:"00665", month:9, freq:3, status:"red", type:"TER", obs:"🔴 Refuerzo continuo" },
+  { name:"TKN1 Sintético", code:"00649", month:9, freq:6, status:"green", type:"Sint", obs:"" },
+  { name:"Coloide", code:"00143", month:9, freq:6, status:"green", type:"Otro", obs:"" },
+  // OCTUBRE
+  { name:"TK6 TER", code:"00666", month:10, freq:3, status:"red", type:"TER", obs:"🔴 Refuerzo continuo" },
+  { name:"TKN7 Sintético", code:"00653", month:10, freq:6, status:"green", type:"Sint", obs:"2° ciclo" },
+  { name:"TKN10 Sintético", code:"00657", month:10, freq:6, status:"green", type:"Sint", obs:"" },
+  { name:"TKN11 Sintético", code:"00658", month:10, freq:6, status:"green", type:"Sint", obs:"" },
+  { name:"TK N6 Sintético", code:"00640", month:10, freq:6, status:"green", type:"Sint", obs:"2° ciclo" },
+  // NOVIEMBRE
+  { name:"TKN12 Sintético", code:"00659", month:11, freq:6, status:"green", type:"Sint", obs:"2° ciclo" },
+  { name:"TKN13 Sintético", code:"00660", month:11, freq:6, status:"green", type:"Sint", obs:"Nuevo" },
+  { name:"Ajustes / Reprocesos", code:"---", month:11, freq:0, status:"blue", type:"Otro", obs:"Buffer técnico" },
+  { name:"Buffer Técnico", code:"---", month:11, freq:0, status:"blue", type:"Otro", obs:"Reserva" },
+  // DICIEMBRE
+  { name:"Pendientes", code:"---", month:12, freq:0, status:"blue", type:"Otro", obs:"Solo pendientes" },
+  { name:"Reensayos", code:"---", month:12, freq:0, status:"blue", type:"Otro", obs:"Reprogramación" },
+  { name:"Auditoría Interna", code:"---", month:12, freq:0, status:"blue", type:"Otro", obs:"Cierre anual" },
+];
+
+const alertsData = [
+  { level:"critical", icon:"🔴", title:"TK4 Látex Blanco (00700) – Desvío recurrente", desc:"Desvío > tolerancia detectado. Frecuencia reforzada a 3 meses activa. Próxima verificación: Septiembre 2026.", time:"Abril 2026" },
+  { level:"critical", icon:"🔴", title:"TK5 TER (00665) – Desvío recurrente", desc:"Ajuste requerido en última verificación. Ciclo reforzado a 3 meses. Seguimiento continuo hasta estabilización.", time:"Abril 2026" },
+  { level:"critical", icon:"🔴", title:"TK6 TER (00666) – Fuera de tolerancia", desc:"Resultado fuera de rango aceptable. Refuerzo a frecuencia trimestral activado. Revisar calibración de instrumentos.", time:"Mayo 2026" },
+  { level:"warning", icon:"⚠️", title:"TK1 Látex Blanco (00592) – Alto historial", desc:"Patrón de desvíos leves recurrentes. Mantener en observación. No requiere refuerzo aún, pero seguimiento cercano.", time:"Abril 2026" },
+  { level:"warning", icon:"⚠️", title:"TK4 Látex Blanco (00700) – Refuerzo continuo", desc:"Equipo en frecuencia 3m desde Abril. Evaluar retorno a 6m tras ciclo de Septiembre si resultados son conformes.", time:"Septiembre 2026" },
+  { level:"info", icon:"🔵", title:"Inicio ciclo 2 – Julio 2026", desc:"Reinicio de verificaciones semestrales para equipos del primer semestre. Validar estabilidad post-backlog.", time:"Julio 2026" },
+  { level:"info", icon:"🔵", title:"Buffer técnico – Noviembre", desc:"Mes reservado para ajustes, reprocesos y holgura técnica. No programar verificaciones nuevas.", time:"Noviembre 2026" },
+  { level:"info", icon:"🔵", title:"Auditoría interna – Diciembre", desc:"Cierre anual: revisión de pendientes, reensayos y auditoría de cumplimiento del plan 2026.", time:"Diciembre 2026" },
+];
+
+const monthNames = ["","Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+const monthShort = ["","Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
+
+// ============================================================
+// INIT
+// ============================================================
+function init() {
+  document.getElementById('currentDate').textContent = new Date().toLocaleDateString('es-ES',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  renderKPIs();
+  renderSemaforo();
+  renderCalendar();
+  renderAlerts();
+  renderDashboard();
+  renderTable();
+  setupTabs();
+  populateModalSelect();
+}
+
+// ============================================================
+// TABS
+// ============================================================
+function setupTabs() {
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+    });
+  });
+}
+
+// ============================================================
+// KPIs
+// ============================================================
+function renderKPIs() {
+  const total = tanksData.length;
+  const green = tanksData.filter(t=>t.status==='green').length;
+  const yellow = tanksData.filter(t=>t.status==='yellow').length;
+  const red = tanksData.filter(t=>t.status==='red').length;
+  const freq3 = tanksData.filter(t=>t.freq===3).length;
+  const completed = tanksData.filter(t=>t.month <= new Date().getMonth() + 1).length;
+  const pct = Math.round((completed / total) * 100);
+
+  document.getElementById('kpiRow').innerHTML = `
+    <div class="kpi kpi-blue">
+      <div class="kpi-icon">🏭</div>
+      <div class="kpi-value">${total}</div>
+      <div class="kpi-label">Total Verificaciones 2026</div>
+      <div class="kpi-trend" style="color:var(--text2)">Planificación completa</div>
+      <div class="kpi-bar"></div>
+    </div>
+    <div class="kpi kpi-green">
+      <div class="kpi-icon">✅</div>
+      <div class="kpi-value">${green}</div>
+      <div class="kpi-label">En Plazo (Semestral)</div>
+      <div class="kpi-trend" style="color:var(--green)">● Frecuencia estándar 6m</div>
+      <div class="kpi-bar"></div>
+    </div>
+    <div class="kpi kpi-yellow">
+      <div class="kpi-icon">⚠️</div>
+      <div class="kpi-value">${yellow}</div>
+      <div class="kpi-label">Atención (Alto Historial)</div>
+      <div class="kpi-trend" style="color:var(--yellow)">● Seguimiento cercano</div>
+      <div class="kpi-bar"></div>
+    </div>
+    <div class="kpi kpi-red">
+      <div class="kpi-icon">🔴</div>
+      <div class="kpi-value">${red}</div>
+      <div class="kpi-label">Con Desvío (Frec. 3m)</div>
+      <div class="kpi-trend" style="color:var(--red)">● Refuerzo activo</div>
+      <div class="kpi-bar"></div>
+    </div>
+    <div class="kpi kpi-cyan">
+      <div class="kpi-icon">📈</div>
+      <div class="kpi-value">${pct}%</div>
+      <div class="kpi-label">Progreso Anual</div>
+      <div class="kpi-trend" style="color:var(--cyan)">${completed} de ${total} programadas</div>
+      <div class="kpi-bar"></div>
+    </div>
+  `;
+}
+
+// ============================================================
+// SEMÁFORO
+// ============================================================
+function renderSemaforo() {
+  const grid = document.getElementById('semaforoGrid');
+  const search = document.getElementById('searchSemaforo').value.toLowerCase();
+  const fStatus = document.getElementById('filterStatus').value;
+  const fMonth = document.getElementById('filterMonth').value;
+  const fType = document.getElementById('filterType').value;
+
+  let filtered = tanksData.filter(t => {
+    if (search && !t.name.toLowerCase().includes(search) && !t.code.includes(search)) return false;
+    if (fStatus !== 'all' && t.status !== fStatus) return false;
+    if (fMonth !== 'all' && t.month !== parseInt(fMonth)) return false;
+    if (fType !== 'all' && t.type !== fType) return false;
+    return true;
+  });
+
+  document.getElementById('countSemaforo').textContent = filtered.length;
+
+  grid.innerHTML = filtered.map(t => {
+    const dotClass = t.status === 'green' ? 'dot-green' : t.status === 'yellow' ? 'dot-yellow' : t.status === 'red' ? 'dot-red' : 'dot-blue';
+    const freqTag = t.freq === 3 ? '<span class="tag tag-freq3">🔁 3 Meses</span>' : t.freq === 6 ? '<span class="tag tag-freq6">📅 6 Meses</span>' : '<span class="tag tag-freq3">🔧 Especial</span>';
+    const alertTag = t.status === 'yellow' ? '<span class="tag tag-alert">⚠️ Atención</span>' : '';
+    const devTag = t.status === 'red' ? '<span class="tag tag-dev">🔴 Desvío</span>' : '';
+
+    return `
+      <div class="semaforo-card" onclick="openTankDetail('${t.code}','${t.name}')">
+        <div class="status-dot ${dotClass}"></div>
+        <div class="tk-name">${t.name}</div>
+        <div class="tk-code">#${t.code} · ${monthNames[t.month] || 'Variable'}</div>
+        <div class="tk-meta">
+          <div class="tk-meta-row"><span>Frecuencia:</span><span>${t.freq} meses</span></div>
+          <div class="tk-meta-row"><span>Tipo:</span><span>${getTypeLabel(t.type)}</span></div>
+          ${t.obs ? `<div class="tk-meta-row" style="color:var(--text3);font-style:italic;"><span>Obs:</span><span>${t.obs}</span></div>` : ''}
+        </div>
+        <div class="tk-tags">${freqTag}${alertTag}${devTag}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function filterSemaforo() { renderSemaforo(); }
+
+function getTypeLabel(type) {
+  const map = { LatBco:'Látex Blanco', TER:'TER', Sint:'Sintético', Reactor:'Reactor', Otro:'Otro' };
+  return map[type] || type;
+}
+
+function openTankDetail(code, name) {
+  const tank = tanksData.find(t => t.code === code && t.name === name);
+  if (!tank) return;
+  showToast('🔍', `Detalles de ${tank.name} (${tank.code}) – ${tank.obs || 'Sin observaciones'}`);
+}
+
+// ============================================================
+// CALENDAR
+// ============================================================
+function renderCalendar() {
+  const grid = document.getElementById('monthlyGrid');
+  let html = '';
+
+  for (let m = 1; m <= 12; m++) {
+    const items = tanksData.filter(t => t.month === m);
+    if (items.length === 0) continue;
+
+    html += `
+      <div class="month-card">
+        <div class="month-header">
+          <span>${monthNames[m]}</span>
+          <span class="month-count">${items.length} verif.</span>
+        </div>
+        <div class="month-body">
+          ${items.map(t => {
+            const dotColor = t.status === 'green' ? 'var(--green)' : t.status === 'yellow' ? 'var(--yellow)' : t.status === 'red' ? 'var(--red)' : 'var(--blue)';
+            return `
+              <div class="month-item">
+                <div class="item-dot" style="background:${dotColor};${t.status==='red'?'box-shadow:0 0 6px var(--red);':''}"></div>
+                <span class="item-name">${t.name}</span>
+                <span class="item-code">${t.code}</span>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  grid.innerHTML = html;
+}
+
+// ============================================================
+// ALERTS
+// ============================================================
+function renderAlerts() {
+  const list = document.getElementById('alertsList');
+  const fLevel = document.getElementById('filterAlertLevel').value;
+
+  let filtered = alertsData.filter(a => fLevel === 'all' || a.level === fLevel);
+  document.getElementById('countAlerts').textContent = alertsData.length;
+
+  list.innerHTML = filtered.map(a => `
+    <div class="alert-item alert-${a.level}">
+      <div class="alert-icon">${a.icon}</div>
+      <div class="alert-content">
+        <div class="alert-title">${a.title}</div>
+        <div class="alert-desc">${a.desc}</div>
+      </div>
+      <div class="alert-time">${a.time}</div>
+    </div>
+  `).join('');
+}
+
+function filterAlerts() { renderAlerts(); }
+
+// ============================================================
+// DASHBOARD
+// ============================================================
+function renderDashboard() {
+  // Monthly bar chart
+  const monthCounts = [];
+  for (let m = 1; m <= 12; m++) {
+    monthCounts.push({ month: m, count: tanksData.filter(t => t.month === m).length });
+  }
+  const maxCount = Math.max(...monthCounts.map(m => m.count));
+
+  document.getElementById('monthlyChart').innerHTML = monthCounts.map(m => {
+    const h = (m.count / maxCount) * 100;
+    const color = m.count <= 2 ? 'var(--green)' : m.count <= 4 ? 'var(--blue)' : m.count <= 5 ? 'var(--yellow)' : 'var(--red)';
+    return `
+      <div class="chart-bar-group">
+        <div class="chart-bar" style="height:${Math.max(h, 3)}%;background:${color};">
+          <div class="bar-tooltip">${monthShort[m.month]}: ${m.count}</div>
+        </div>
+        <div class="chart-label">${monthShort[m.month]}</div>
+      </div>
+    `;
+  }).join('');
+
+  // Donut chart
+  const green = tanksData.filter(t => t.status === 'green').length;
+  const yellow = tanksData.filter(t => t.status === 'yellow').length;
+  const red = tanksData.filter(t => t.status === 'red').length;
+  const blue = tanksData.filter(t => t.status === 'blue').length;
+  const total = tanksData.length;
+
+  const pctGreen = Math.round((green / total) * 100);
+  const pctYellow = Math.round((yellow / total) * 100);
+  const pctRed = Math.round((red / total) * 100);
+  const pctBlue = Math.round((blue / total) * 100);
+
+  // SVG donut
+  const r = 60;
+  const c = 2 * Math.PI * r;
+  const offsetGreen = 0;
+  const offsetYellow = -(pctGreen / 100) * c;
+  const offsetRed = -((pctGreen + pctYellow) / 100) * c;
+  const offsetBlue = -((pctGreen + pctYellow + pctRed) / 100) * c;
+
+  document.getElementById('donutContainer').innerHTML = `
+    <div class="donut-wrap">
+      <svg viewBox="0 0 160 160" style="transform:rotate(-90deg);">
+        <circle cx="80" cy="80" r="${r}" fill="none" stroke="var(--card2)" stroke-width="14"/>
+        <circle cx="80" cy="80" r="${r}" fill="none" stroke="var(--green)" stroke-width="14"
+          stroke-dasharray="${(pctGreen/100)*c} ${c}" stroke-dashoffset="${offsetGreen}" stroke-linecap="round"/>
+        <circle cx="80" cy="80" r="${r}" fill="none" stroke="var(--yellow)" stroke-width="14"
+          stroke-dasharray="${(pctYellow/100)*c} ${c}" stroke-dashoffset="${offsetYellow}" stroke-linecap="round"/>
+        <circle cx="80" cy="80" r="${r}" fill="none" stroke="var(--red)" stroke-width="14"
+          stroke-dasharray="${(pctRed/100)*c} ${c}" stroke-dashoffset="${offsetRed}" stroke-linecap="round"/>
+        <circle cx="80" cy="80" r="${r}" fill="none" stroke="var(--blue)" stroke-width="14"
+          stroke-dasharray="${(pctBlue/100)*c} ${c}" stroke-dashoffset="${offsetBlue}" stroke-linecap="round"/>
+      </svg>
+      <div class="donut-center">
+        <div class="donut-value">${total}</div>
+        <div class="donut-label">Total</div>
+      </div>
+    </div>
+    <div class="donut-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> En Plazo: ${green} (${pctGreen}%)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--yellow)"></div> Atención: ${yellow} (${pctYellow}%)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div> Desvío: ${red} (${pctRed}%)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div> Especial: ${blue} (${pctBlue}%)</div>
+    </div>
+  `;
+
+  // Type chart
+  const types = {};
+  tanksData.forEach(t => {
+    if (!types[t.type]) types[t.type] = { green:0, yellow:0, red:0, blue:0 };
+    types[t.type][t.status]++;
+  });
+
+  const typeEntries = Object.entries(types);
+  const maxTypeCount = Math.max(...typeEntries.map(([k,v]) => v.green + v.yellow + v.red + v.blue));
+
+  document.getElementById('typeChart').innerHTML = typeEntries.map(([type, counts]) => {
+    const total = counts.green + counts.yellow + counts.red + counts.blue;
+    const h = (total / maxTypeCount) * 100;
+    const color = counts.red > 0 ? 'var(--red)' : counts.yellow > 0 ? 'var(--yellow)' : 'var(--green)';
+    return `
+      <div class="chart-bar-group">
+        <div class="chart-bar" style="height:${Math.max(h,3)}%;background:${color};">
+          <div class="bar-tooltip">${getTypeLabel(type)}: ${total}</div>
+        </div>
+        <div class="chart-label">${getTypeLabel(type)}</div>
+      </div>
+    `;
+  }).join('');
+
+  // Progress
+  const currentMonth = new Date().getMonth() + 1;
+  const completedUpTo = tanksData.filter(t => t.month <= currentMonth).length;
+  const pctProgress = Math.round((completedUpTo / total) * 100);
+
+  document.getElementById('progressSection').innerHTML = `
+    <div style="margin-bottom:16px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+        <span style="font-size:.78rem;color:var(--text2);">Mes actual: ${monthNames[currentMonth]}</span>
+        <span style="font-size:.78rem;font-weight:700;">${completedUpTo} / ${total} (${pctProgress}%)</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width:${pctProgress}%;background:linear-gradient(90deg,var(--cyan),var(--blue));"></div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="compliance-meter">
+        <div class="meter-ring" style="border-color:var(--green);color:var(--green);">
+          ${Math.round((green/total)*100)}%
+        </div>
+        <div class="meter-info">
+          <div class="meter-label">Conformidad</div>
+          <div class="meter-value" style="color:var(--green);">${green} equipos</div>
+        </div>
+      </div>
+      <div class="compliance-meter">
+        <div class="meter-ring" style="border-color:var(--red);color:var(--red);">
+          ${Math.round((red/total)*100)}%
+        </div>
+        <div class="meter-info">
+          <div class="meter-label">Con Desvío</div>
+          <div class="meter-value" style="color:var(--red);">${red} equipos</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ============================================================
+// TABLE
+// ============================================================
+function renderTable() {
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = tanksData.map(t => {
+    const statusClass = t.status === 'green' ? 'status-on-track' : t.status === 'yellow' ? 'status-warning' : t.status === 'red' ? 'status-overdue' : 'status-pending';
+    const statusLabel = t.status === 'green' ? 'En Plazo' : t.status === 'yellow' ? 'Atención' : t.status === 'red' ? 'Desvío' : 'Especial';
+    const freqLabel = t.freq === 3 ? '🔁 3 meses (refuerzo)' : t.freq === 6 ? '📅 6 meses' : '🔧 Especial';
+
+    return `
+      <tr>
+        <td style="font-weight:600;">${t.name}</td>
+        <td style="font-family:monospace;color:var(--text2);">${t.code}</td>
+        <td>${getTypeLabel(t.type)}</td>
+        <td>${monthNames[t.month] || 'Variable'}</td>
+        <td>${freqLabel}</td>
+        <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
+        <td style="color:var(--text3);font-size:.74rem;">${t.obs || '—'}</td>
+      </tr>
+    `;
+  }).join('');
+}
+
+// ============================================================
+// MODAL
+// ============================================================
+function populateModalSelect() {
+  const select = document.getElementById('modalTank');
+  const uniqueTanks = [];
+  const seen = new Set();
+  tanksData.forEach(t => {
+    if (!seen.has(t.code)) {
+      seen.add(t.code);
+      uniqueTanks.push(t);
+    }
+  });
+
+  select.innerHTML = '<option value="">Seleccionar...</option>' +
+    uniqueTanks.map(t => `<option value="${t.code}">${t.name} (${t.code})</option>`).join('');
+}
+
+function openModal() {
+  document.getElementById('modalOverlay').classList.add('show');
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modalOverlay')) {
+    document.getElementById('modalOverlay').classList.remove('show');
+  }
+}
+
+function closeModalDirect() {
+  document.getElementById('modalOverlay').classList.remove('show');
+}
+
+function saveVerification() {
+  const tank = document.getElementById('modalTank').value;
+  const date = document.getElementById('modalDate').value;
+  const result = document.getElementById('modalResult').value;
+  const notes = document.getElementById('modalNotes').value;
+  const nextDate = document.getElementById('modalNextDate').value;
+
+  if (!tank || !date) {
+    showToast('⚠️', 'Completa al menos el tanque y la fecha.');
+    return;
+  }
+
+  let msg = 'Verificación registrada correctamente.';
+  if (result === 'dev' || result === 'fail') {
+    msg += ' ⚠️ Se activará frecuencia de refuerzo (3 meses).';
+  }
+
+  showToast('✅', msg);
+  closeModalDirect();
+
+  // Reset form
+  document.getElementById('modalTank').value = '';
+  document.getElementById('modalDate').value = '';
+  document.getElementById('modalResult').value = 'ok';
+  document.getElementById('modalNotes').value = '';
+  document.getElementById('modalNextDate').value = '';
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+function showToast(icon, msg) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toastIcon').textContent = icon;
+  document.getElementById('toastMsg').textContent = msg;
+  toast.style.display = 'flex';
+  setTimeout(() => { toast.style.display = 'none'; }, 4000);
+}
+
+// ============================================================
+// EXPORT
+// ============================================================
+function exportCSV() {
+  let csv = 'Equipo,Codigo,Tipo,Mes,Frecuencia,Estado,Observaciones\n';
+  tanksData.forEach(t => {
+    csv += `"${t.name}","${t.code}","${getTypeLabel(t.type)}","${monthNames[t.month] || 'Variable'}","${t.freq} meses","${t.status}","${t.obs}"\n`;
+  });
+  downloadFile(csv, 'planificacion_tanques_2026.csv', 'text/csv');
+  showToast('📄', 'CSV exportado correctamente.');
+}
+
+function exportJSON() {
+  const json = JSON.stringify(tanksData, null, 2);
+  downloadFile(json, 'planificacion_tanques_2026.json', 'application/json');
+  showToast('📦', 'JSON exportado correctamente.');
+}
+
+function exportData() {
+  exportCSV();
+}
+
+function downloadFile(content, filename, type) {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ============================================================
+// START
+// ============================================================
+init();
+</script>
+</body>
+</html>
