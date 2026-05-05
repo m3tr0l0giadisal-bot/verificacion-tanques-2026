@@ -3,488 +3,238 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📊 Verificación Interna de Tanques 2026 - Grupo Disal</title>
+    <title>📊 Verificación de Tanques 2026 - Grupo Disal</title>
     
+    <!-- CDN Bootstrap & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
     
     <style>
         :root {
-            --disal-primary: #1E3A8A;
-            --disal-secondary: #2563EB;
-            --disal-light: #EFF6FF;
-            --disal-accent: #3B82F6;
-            --disal-text: #1F2937;
-            --disal-text-light: #6B7280;
+            --disal-primary: #1E3A8A;    /* Azul Disal */
+            --disal-secondary: #2563EB;  /* Azul Acento */
+            --disal-light: #EFF6FF;      /* Fondo Azul Claro */
+            --disal-bg: #F8FAFC;         /* Fondo General */
+            --disal-text: #1F2937;       /* Texto Oscuro */
             --disal-success: #10B981;
             --disal-warning: #F59E0B;
             --disal-danger: #EF4444;
-            --disal-info: #0EA5E9;
-            --disal-bg: #F8FAFC;
-            --disal-card: #FFFFFF;
             --disal-border: #E2E8F0;
-            --disal-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
 
-        body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background-color: var(--disal-bg);
-            color: var(--disal-text);
-            margin: 0;
-            padding: 0;
-        }
-
-        #login-screen {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, var(--disal-light) 0%, #ffffff 100%);
-            position: fixed;
-            top: 0; left: 0; width: 100%; z-index: 9999;
-        }
-        .login-card {
-            background: var(--disal-card);
-            border-radius: 16px;
-            box-shadow: var(--disal-shadow);
-            padding: 2.5rem;
-            width: 100%;
-            max-width: 420px;
-            text-align: center;
-        }
-        .login-card h2 { color: var(--disal-primary); font-weight: 700; margin-bottom: 0.5rem; }
-        .login-card p { color: var(--disal-text-light); margin-bottom: 2rem; }
-        .btn-disal { background: var(--disal-primary); color: white; border: none; padding: 0.75rem; border-radius: 8px; font-weight: 600; width: 100%; transition: all 0.3s; }
-        .btn-disal:hover { background: var(--disal-secondary); transform: translateY(-2px); }
-        .form-control { border-radius: 8px; border: 1px solid var(--disal-border); padding: 0.75rem; }
-        .form-control:focus { border-color: var(--disal-accent); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
-
-        #app-container { display: none; }
-        .top-bar {
-            background: var(--disal-primary);
-            color: white;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: var(--disal-shadow);
-        }
-        .top-bar .brand { font-size: 1.25rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; }
-        .top-bar .user-info { display: flex; align-items: center; gap: 1rem; font-size: 0.9rem; }
-        .badge-notif { background: var(--disal-danger); color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7rem; }
-
-        .sidebar {
-            background: var(--disal-card);
-            width: 260px;
-            height: calc(100vh - 60px);
-            position: fixed;
-            top: 60px;
-            left: 0;
-            padding: 1.5rem;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
-            overflow-y: auto;
-        }
-        .nav-link {
-            color: var(--disal-text-light);
-            padding: 0.75rem 1rem;
-            border-radius: 8px;
-            margin-bottom: 0.5rem;
-            transition: all 0.2s;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        .nav-link:hover, .nav-link.active { background: var(--disal-light); color: var(--disal-primary); font-weight: 600; }
-        .nav-link i { width: 20px; text-align: center; }
-
-        .main-content {
-            margin-left: 260px;
-            padding: 2rem;
-            min-height: calc(100vh - 60px);
-        }
-
-        .stat-card {
-            background: var(--disal-card);
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: var(--disal-shadow);
-            border-left: 4px solid var(--disal-primary);
-            margin-bottom: 1rem;
-        }
-        .stat-card.success { border-left-color: var(--disal-success); }
-        .stat-card.warning { border-left-color: var(--disal-warning); }
-        .stat-card.danger { border-left-color: var(--disal-danger); }
-        .stat-card.info { border-left-color: var(--disal-info); }
-        .stat-value { font-size: 2rem; font-weight: 700; margin: 0.5rem 0; }
-        .stat-label { color: var(--disal-text-light); font-size: 0.9rem; }
-
-        .table-container {
-            background: var(--disal-card);
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: var(--disal-shadow);
-            overflow-x: auto;
-        }
-        .table { margin-bottom: 0; }
-        .table thead th { background: var(--disal-light); color: var(--disal-primary); border-bottom: 2px solid var(--disal-border); font-weight: 600; }
-        .table tbody tr:hover { background: #F8FAFC; }
-        .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
-        .status-conforme { background: #D1FAE5; color: #065F46; }
-        .status-atencion { background: #FEF3C7; color: #92400E; }
-        .status-desvio { background: #FEE2E2; color: #991B1B; }
-        .status-especial { background: #DBEAFE; color: #1E40AF; }
-        .criticidad-A { background: #FEE2E2; color: #991B1B; border: 2px solid #EF4444; }
-        .criticidad-B { background: #FEF3C7; color: #92400E; border: 2px solid #F59E0B; }
-        .criticidad-C { background: #D1FAE5; color: #065F46; border: 2px solid #10B981; }
-        .historial-badge { background: #6B7280; color: white; padding: 2px 6px; border-radius: 10px; font-size: 0.7rem; margin-left: 5px; }
-
-        .filter-bar { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
-        .filter-bar select, .filter-bar input { border-radius: 8px; border: 1px solid var(--disal-border); padding: 0.5rem 1rem; }
-
-        .modal-header { background: var(--disal-primary); color: white; border-radius: 12px 12px 0 0; }
-        .modal-content { border: none; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
-        .btn-close-white { filter: invert(1); }
-
-        .text-disal { color: var(--disal-primary); }
-        .bg-disal-light { background: var(--disal-light); }
-        .d-none { display: none !important; }
-        .refuerzo-badge { background: #EF4444; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 700; }
-        .desvio-badge { background: #DC2626; color: white; padding: 2px 6px; border-radius: 8px; font-size: 0.75rem; font-weight: 600; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--disal-bg); color: var(--disal-text); margin: 0; overflow-x: hidden; }
         
-        @media (max-width: 768px) {
-            .sidebar { width: 100%; height: auto; position: relative; top: 0; }
-            .main-content { margin-left: 0; }
-            .top-bar { flex-direction: column; gap: 0.5rem; }
-        }
+        /* Login */
+        #login-screen { position: fixed; inset: 0; background: linear-gradient(135deg, var(--disal-light), #fff); display: flex; align-items: center; justify-content: center; z-index: 9999; }
+        .login-card { background: white; padding: 2.5rem; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
+        .btn-disal { background: var(--disal-primary); color: white; border: none; width: 100%; padding: 12px; border-radius: 8px; font-weight: 600; }
+        .btn-disal:hover { background: var(--disal-secondary); color: white; }
+
+        /* Layout App */
+        #app-container { display: none; height: 100vh; display: flex; flex-direction: column; } /* Hidden by default */
+        .top-bar { background: var(--disal-primary); color: white; padding: 0.8rem 1.5rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 100; }
+        
+        .wrapper { display: flex; flex: 1; overflow: hidden; }
+        .sidebar { width: 260px; background: white; border-right: 1px solid var(--disal-border); display: flex; flex-direction: column; padding: 1rem; }
+        .sidebar .nav-link { color: var(--disal-text); padding: 12px; margin-bottom: 5px; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 10px; }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active { background: var(--disal-light); color: var(--disal-primary); font-weight: 600; }
+        .sidebar .nav-link i { width: 20px; text-align: center; }
+        
+        .main-content { flex: 1; overflow-y: auto; padding: 2rem; background: var(--disal-bg); }
+
+        /* Cards & Stats */
+        .stat-card { background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border-left: 4px solid var(--disal-primary); margin-bottom: 1rem; }
+        .stat-value { font-size: 2rem; font-weight: 700; }
+        .stat-label { color: #6B7280; font-size: 0.9rem; }
+
+        /* Table */
+        .table-container { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.05); overflow-x: auto; }
+        .table th { background: var(--disal-light); color: var(--disal-primary); border-bottom: 2px solid var(--disal-border); }
+        .table-hover tbody tr:hover { background: #F8FAFC; }
+        
+        .badge-status { padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+        .bg-conforme { background: #D1FAE5; color: #065F46; }
+        .bg-atencion { background: #FEF3C7; color: #92400E; }
+        .bg-desvio { background: #FEE2E2; color: #991B1B; }
+        .bg-refuerzo { background: var(--disal-danger); color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 10px; margin-left: 5px; }
+
+        .criticidad-A { border: 2px solid #EF4444; color: #EF4444; background: #FEF2F2; }
+        .criticidad-B { border: 2px solid #F59E0B; color: #F59E0B; background: #FFFBEB; }
+        .criticidad-C { border: 2px solid #10B981; color: #10B981; background: #ECFDF5; }
+
+        /* Utility */
+        .hidden { display: none !important; }
+        .filter-bar { display: flex; gap: 10px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .filter-bar select, .filter-bar input { border-radius: 8px; padding: 8px 12px; border: 1px solid var(--disal-border); min-width: 150px; }
+
+        @media print { .no-print { display: none !important; } }
     </style>
 </head>
 <body>
 
+    <!-- LOGIN -->
     <div id="login-screen">
         <div class="login-card">
-            <div style="font-size: 3rem; color: var(--disal-primary); margin-bottom: 0.5rem;">⚖️</div>
-            <h2>GRUPO DISAL</h2>
-            <p>Sistema de Gestión de Metrología<br>Verificación de Tanques 2026</p>
+            <div style="font-size: 3rem; color: var(--disal-primary);"><i class="fas fa-balance-scale"></i></div>
+            <h2 class="mt-3 text-disal-primary">GRUPO DISAL</h2>
+            <p class="text-muted mb-4">Sistema de Gestión de Metrología</p>
             <form id="login-form">
-                <div class="mb-3 text-start">
-                    <label class="form-label">Correo electrónico</label>
-                    <input type="email" id="login-email" class="form-control" placeholder="usuario@disal.com" required>
-                </div>
-                <div class="mb-3 text-start">
-                    <label class="form-label">Contraseña</label>
-                    <input type="password" id="login-pass" class="form-control" placeholder="••••••••">
-                </div>
+                <input type="email" id="login-email" class="form-control mb-3" placeholder="Correo electrónico" required>
+                <input type="password" id="login-pass" class="form-control mb-3" placeholder="Contraseña de administrador">
                 <button type="submit" class="btn btn-disal">Ingresar al Sistema</button>
             </form>
-            <div class="mt-3 text-muted small">
-                👤 Visualiza datos y solicita verificaciones<br>
-                🔐 Administrador: m3tr0l0giadisal@gmail.com
+            <div class="mt-3 text-muted small text-start">
+                <p><i class="fas fa-user"></i> Usuario: Visualiza datos y solicita verificaciones</p>
+                <p><i class="fas fa-lock"></i> Admin: m3tr0l0giadisal@gmail.com</p>
             </div>
         </div>
     </div>
 
-    <div id="app-container">
+    <!-- APP -->
+    <div id="app-container" class="hidden">
+        <!-- Top Bar -->
         <div class="top-bar">
-            <div class="brand">
-                <span>⚖️</span> Grupo Disal - Metrología
+            <div class="d-flex align-items-center gap-2">
+                <i class="fas fa-balance-scale fa-lg"></i>
+                <span class="fw-bold fs-5">Grupo Disal - Metrología</span>
             </div>
-            <div class="user-info">
-                <span id="user-role-badge" class="badge bg-light text-dark">Usuario</span>
+            <div class="d-flex align-items-center gap-3">
+                <span class="badge bg-light text-dark" id="user-role-badge">Usuario</span>
                 <span id="user-email-display">usuario@email.com</span>
-                <button class="btn btn-sm btn-outline-light" onclick="logout()">Salir</button>
+                <button onclick="logout()" class="btn btn-sm btn-outline-light">Salir</button>
             </div>
         </div>
 
-        <div class="sidebar">
-            <div class="nav-link active" onclick="showSection('dashboard')">
-                <i class="fas fa-chart-line"></i> Dashboard
-            </div>
-            <div class="nav-link" onclick="showSection('tabla')">
-                <i class="fas fa-table"></i> Planificación
-            </div>
-            <div class="nav-link" onclick="showSection('historial')">
-                <i class="fas fa-history"></i> Historial 2025
-            </div>
-            <div class="nav-link" onclick="openModal('modal-solicitud')">
-                <i class="fas fa-file-signature"></i> Solicitar Verificación
-            </div>
-            <div class="nav-link admin-only d-none" onclick="openModal('modal-registro')">
-                <i class="fas fa-tools"></i> Registrar Verificación
-            </div>
-            <div class="nav-link" onclick="openModal('modal-print')">
-                <i class="fas fa-file-pdf"></i> Imprimir PDF
-            </div>
-            <div class="nav-link" onclick="openModal('modal-notif')">
-                <i class="fas fa-bell"></i> Notificaciones
-                <span class="badge-notif ms-auto" id="notif-count">0</span>
-            </div>
-            <hr>
-            <div class="small text-muted mt-3">v3.0 | Mayo 2026</div>
-        </div>
-
-        <div class="main-content">
-            
-            <div id="section-dashboard">
-                <h3 class="mb-4">📈 Dashboard de Cumplimiento</h3>
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="stat-card">
-                            <div class="stat-label">Total Equipos</div>
-                            <div class="stat-value" id="stat-total">0</div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="stat-card success">
-                            <div class="stat-label">Conformes</div>
-                            <div class="stat-value text-success" id="stat-conforme">0</div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="stat-card warning">
-                            <div class="stat-label">En Atención</div>
-                            <div class="stat-value text-warning" id="stat-atencion">0</div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="stat-card danger">
-                            <div class="stat-label">Desvíos</div>
-                            <div class="stat-value text-danger" id="stat-desvio">0</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row mt-4">
-                    <div class="col-md-4">
-                        <div class="stat-card info">
-                            <div class="stat-label">Control Reforzado (Trimestral)</div>
-                            <div class="stat-value text-danger" id="stat-reforzado">0</div>
-                            <small class="text-muted">Equipos con historial de desvíos</small>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="stat-card warning">
-                            <div class="stat-label">Criticidad A (4x/año)</div>
-                            <div class="stat-value" id="stat-crit-a">0</div>
-                            <small class="text-muted">Látex Blanco y Sintéticos</small>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="stat-card success">
-                            <div class="stat-label">Verificaciones 2025</div>
-                            <div class="stat-value text-success" id="stat-hist-2025">0</div>
-                            <small class="text-muted">Total realizadas</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="row mt-4">
-                    <div class="col-md-12">
-                        <div class="table-container">
-                            <h5 class="mb-3">📊 Carga Mensual 2026</h5>
-                            <canvas id="chart-mensual" height="100"></canvas>
-                        </div>
-                    </div>
-                </div>
+        <div class="wrapper">
+            <!-- Sidebar -->
+            <div class="sidebar no-print">
+                <div class="nav-link active" onclick="showSection('dashboard')"><i class="fas fa-chart-line"></i> Dashboard</div>
+                <div class="nav-link" onclick="showSection('tabla')"><i class="fas fa-table"></i> Planificación 2026</div>
+                <div class="nav-link" onclick="showSection('historial')"><i class="fas fa-history"></i> Historial 2025</div>
+                <div class="nav-link" onclick="openModal('modal-solicitud')"><i class="fas fa-file-signature"></i> Solicitar Verificación</div>
+                <div class="nav-link admin-only hidden" onclick="openModal('modal-registro')"><i class="fas fa-tools"></i> Registrar Verificación</div>
+                <div class="nav-link" onclick="openModal('modal-notif')"><i class="fas fa-bell"></i> Notificaciones</div>
+                <hr class="my-3">
+                <div class="small text-muted mt-auto">v3.1 | Mayo 2026</div>
             </div>
 
-            <div id="section-tabla" class="d-none">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h3>📋 Planificación 2026</h3>
-                    <div class="btn-group">
-                        <button class="btn btn-outline-secondary btn-sm" onclick="exportCSV()"><i class="fas fa-file-csv"></i> CSV</button>
-                        <button class="btn btn-outline-secondary btn-sm" onclick="exportJSON()"><i class="fas fa-file-code"></i> JSON</button>
-                    </div>
-                </div>
+            <!-- Main Content -->
+            <div class="main-content">
                 
-                <div class="filter-bar">
-                    <select id="filter-mes" onchange="renderTabla()">
-                        <option value="todos">Todos los meses</option>
-                        <option value="Enero">Enero</option>
-                        <option value="Febrero">Febrero</option>
-                        <option value="Marzo">Marzo</option>
-                        <option value="Abril">Abril</option>
-                        <option value="Mayo">Mayo</option>
-                        <option value="Junio">Junio</option>
-                        <option value="Julio">Julio</option>
-                        <option value="Agosto">Agosto</option>
-                        <option value="Septiembre">Septiembre</option>
-                        <option value="Octubre">Octubre</option>
-                        <option value="Noviembre">Noviembre</option>
-                        <option value="Diciembre">Diciembre</option>
-                    </select>
-                    <select id="filter-estado" onchange="renderTabla()">
-                        <option value="todos">Todos los estados</option>
-                        <option value="Conforme">✅ Conforme</option>
-                        <option value="Atención">⚠️ Atención</option>
-                        <option value="Desvío">🔴 Desvío</option>
-                    </select>
-                    <select id="filter-criticidad" onchange="renderTabla()">
-                        <option value="todos">Todas criticidades</option>
-                        <option value="A">🔴 A - Crítico (4x/año)</option>
-                        <option value="B">🟡 B - Medio (2x/año)</option>
-                        <option value="C">🟢 C - Bajo (1x/año)</option>
-                    </select>
-                    <select id="filter-tipo" onchange="renderTabla()">
-                        <option value="todos">Todos los tipos</option>
-                        <option value="Látex Blanco">Látex Blanco</option>
-                        <option value="Látex Color">Látex Color</option>
-                        <option value="TER">TER</option>
-                        <option value="Sintético">Sintético</option>
-                        <option value="Reactor">Reactor</option>
-                        <option value="Resinas">Resinas</option>
-                        <option value="Emulsiones">Emulsiones</option>
-                    </select>
-                    <input type="text" id="filter-buscar" placeholder="🔍 Buscar equipo o código..." onkeyup="renderTabla()">
-                </div>
-
-                <div class="table-container">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Equipo</th>
-                                <th>Código</th>
-                                <th>Tipo</th>
-                                <th>Criticidad</th>
-                                <th>Mes</th>
-                                <th>Frec.</th>
-                                <th>Estado</th>
-                                <th>Última Verif.</th>
-                                <th>Obs.</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabla-planificacion">
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div id="section-historial" class="d-none">
-                <h3 class="mb-4">📚 Historial de Verificaciones 2025</h3>
-                <div class="alert alert-info">
-                    <i class="fas fa-info-circle"></i> Registro completo de verificaciones realizadas en 2025 con desvíos y ajustes documentados
-                </div>
-                <div class="table-container">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Código</th>
-                                <th>Equipo</th>
-                                <th>Tipo</th>
-                                <th>Verificación 1</th>
-                                <th>Verificación 2</th>
-                                <th>Verificación 3</th>
-                                <th>Verificación 4</th>
-                                <th>Desvíos</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabla-historial">
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <div class="modal fade" id="modal-solicitud" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">📝 Solicitar Verificación/Ajuste</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Tanque / Equipo</label>
-                        <select class="form-select" id="sol-equipo"></select>
+                <!-- DASHBOARD -->
+                <div id="section-dashboard">
+                    <h3 class="mb-4"> Dashboard de Cumplimiento</h3>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-3"><div class="stat-card"><div class="stat-label">Total Equipos</div><div class="stat-value" id="stat-total">0</div></div></div>
+                        <div class="col-md-3"><div class="stat-card" style="border-left-color: var(--disal-success);"><div class="stat-label">Conformes</div><div class="stat-value text-success" id="stat-conforme">0</div></div></div>
+                        <div class="col-md-3"><div class="stat-card" style="border-left-color: var(--disal-warning);"><div class="stat-label">En Atención</div><div class="stat-value text-warning" id="stat-atencion">0</div></div></div>
+                        <div class="col-md-3"><div class="stat-card" style="border-left-color: var(--disal-danger);"><div class="stat-label">Desvíos</div><div class="stat-value text-danger" id="stat-desvio">0</div></div></div>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Tipo</label>
-                        <select class="form-select" id="sol-tipo">
-                            <option value="Verificación">✅ Verificación</option>
-                            <option value="Ajuste">🔧 Ajuste</option>
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <div class="table-container">
+                                <h5>📊 Carga Mensual 2026</h5>
+                                <canvas id="chart-mensual" height="150"></canvas>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="table-container">
+                                <h5>🎯 Distribución por Estado</h5>
+                                <canvas id="chart-estado" height="250"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TABLA PLANIFICACIÓN -->
+                <div id="section-tabla" class="hidden">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h3>📋 Planificación 2026</h3>
+                        <div class="btn-group">
+                            <button class="btn btn-outline-primary btn-sm" onclick="openModal('modal-print')"><i class="fas fa-file-pdf"></i> Imprimir PDF</button>
+                            <button class="btn btn-outline-secondary btn-sm" onclick="exportCSV()"><i class="fas fa-file-csv"></i> CSV</button>
+                            <button class="btn btn-outline-secondary btn-sm" onclick="exportJSON()"><i class="fas fa-file-code"></i> JSON</button>
+                        </div>
+                    </div>
+
+                    <div class="filter-bar">
+                        <select id="filter-mes" onchange="renderTabla()">
+                            <option value="todos">Todos los meses</option>
+                            <option value="Enero">Enero</option><option value="Febrero">Febrero</option>
+                            <option value="Marzo">Marzo</option><option value="Abril">Abril</option>
+                            <option value="Mayo">Mayo</option><option value="Junio">Junio</option>
+                            <option value="Julio">Julio</option><option value="Agosto">Agosto</option>
+                            <option value="Septiembre">Septiembre</option><option value="Octubre">Octubre</option>
+                            <option value="Noviembre">Noviembre</option><option value="Diciembre">Diciembre</option>
                         </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Urgencia</label>
-                        <select class="form-select" id="sol-urgencia">
-                            <option value="Normal">🟢 Normal</option>
-                            <option value="Alta">🟡 Alta</option>
-                            <option value="Crítica">🔴 Crítica</option>
+                        <select id="filter-estado" onchange="renderTabla()">
+                            <option value="todos">Todos los estados</option>
+                            <option value="Conforme">✅ Conforme</option>
+                            <option value="Atención">⚠️ Atención</option>
+                            <option value="Desvío">🔴 Desvío</option>
                         </select>
+                        <select id="filter-criticidad" onchange="renderTabla()">
+                            <option value="todos">Todas criticidades</option>
+                            <option value="A">🔴 A - Crítico</option>
+                            <option value="B">🟡 B - Medio</option>
+                            <option value="C"> C - Bajo</option>
+                        </select>
+                        <select id="filter-tipo" onchange="renderTabla()">
+                            <option value="todos">Todos los tipos</option>
+                            <option value="Látex Blanco">Látex Blanco</option>
+                            <option value="Látex Color">Látex Color</option>
+                            <option value="TER">TER</option>
+                            <option value="Sintético">Sintético</option>
+                            <option value="Reactor">Reactor</option>
+                            <option value="Resinas">Resinas</option>
+                            <option value="Emulsiones">Emulsiones</option>
+                        </select>
+                        <input type="text" id="filter-buscar" placeholder="🔍 Buscar equipo o código..." onkeyup="renderTabla()">
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Tu email</label>
-                        <input type="email" class="form-control" id="sol-email" placeholder="tu@email.com">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Motivo *</label>
-                        <textarea class="form-control" id="sol-motivo" rows="3" required></textarea>
+
+                    <div class="table-container">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Equipo</th><th>Código</th><th>Tipo</th><th>Criticidad</th>
+                                    <th>Mes</th><th>Frec.</th><th>Estado</th><th>Última Verif.</th><th>Obs.</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-planificacion"></tbody>
+                        </table>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-disal" onclick="enviarSolicitud()">💬 Enviar Solicitud</button>
+
+                <!-- HISTORIAL 2025 -->
+                <div id="section-historial" class="hidden">
+                    <h3 class="mb-4">📚 Historial de Verificaciones 2025</h3>
+                    <div class="alert alert-info"><i class="fas fa-info-circle"></i> Registro completo de verificaciones realizadas en 2025 con desvíos documentados.</div>
+                    <div class="table-container">
+                        <table class="table table-striped align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Código</th><th>Equipo</th><th>Tipo</th>
+                                    <th>Última Verif. 2025</th><th>Historial Desvíos</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-historial"></tbody>
+                        </table>
+                    </div>
                 </div>
+
             </div>
         </div>
     </div>
 
-    <div class="modal fade" id="modal-registro" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">🔧 Registrar Verificación</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Equipo</label>
-                            <select class="form-select" id="reg-equipo"></select>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Fecha</label>
-                            <input type="date" class="form-control" id="reg-fecha">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">Resultado</label>
-                            <select class="form-select" id="reg-resultado" onchange="checkRequiereAjuste()">
-                                <option value="Conforme">✅ Conforme</option>
-                                <option value="Ajuste">🔧 Requiere Ajuste</option>
-                                <option value="Desvío">⚠️ Desvío</option>
-                                <option value="Fuera">🔴 Fuera de tolerancia</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label">% Desvío (si aplica)</label>
-                            <input type="text" class="form-control" id="reg-desvio-pct" placeholder="Ej: +2%, -3.5%">
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Observaciones</label>
-                        <textarea class="form-control" id="reg-obs" rows="2"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Notificar a (email)</label>
-                        <input type="email" class="form-control" id="reg-email-notif">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-disal" onclick="guardarVerificacion()">💾 Guardar + Notificar</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- MODALES -->
 
+    <!-- Modal Imprimir PDF -->
     <div class="modal fade" id="modal-print" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">📄 Imprimir Planificación - Grupo Disal</h5>
+                <div class="modal-header" style="background: var(--disal-primary); color: white;">
+                    <h5 class="modal-title">📄 Imprimir Planificación</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -492,6 +242,7 @@
                         <label class="col-sm-4 col-form-label">Mes a imprimir:</label>
                         <div class="col-sm-8">
                             <select class="form-select" id="mes-print">
+                                <option value="todos">📅 Todos los meses</option>
                                 <option value="Enero">Enero</option><option value="Febrero">Febrero</option>
                                 <option value="Marzo">Marzo</option><option value="Abril">Abril</option>
                                 <option value="Mayo">Mayo</option><option value="Junio">Junio</option>
@@ -499,71 +250,107 @@
                                 <option value="Septiembre">Septiembre</option><option value="Octubre">Octubre</option>
                                 <option value="Noviembre">Noviembre</option><option value="Diciembre">Diciembre</option>
                             </select>
+                            <small class="text-muted">Seleccione "Todos los meses" para el reporte anual completo.</small>
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Notas adicionales (opcional):</label>
-                        <textarea class="form-control" id="notas-print" rows="3"></textarea>
+                        <label class="form-label">Notas adicionales:</label>
+                        <textarea class="form-control" id="notas-print" rows="2"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-disal" onclick="generarPDF()">🖨️ Generar PDF</button>
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn btn-disal" onclick="generarPDF()">🖨️ Generar PDF</button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Modal Notificaciones -->
     <div class="modal fade" id="modal-notif" tabindex="-1">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">✉️ Centro de Notificaciones</h5>
+                <div class="modal-header" style="background: var(--disal-primary); color: white;">
+                    <h5 class="modal-title">✉️ Notificaciones</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <h6 class="mb-3">⚙️ Configuración EmailJS</h6>
-                    <div class="row mb-3">
-                        <div class="col-md-4"><input type="text" class="form-control" id="cfg-service" placeholder="Service ID"></div>
-                        <div class="col-md-4"><input type="text" class="form-control" id="cfg-template" placeholder="Template ID"></div>
-                        <div class="col-md-4"><input type="text" class="form-control" id="cfg-public" placeholder="Public Key"></div>
-                    </div>
-                    <div class="d-flex gap-2 mb-4">
-                        <button class="btn btn-outline-primary btn-sm" onclick="guardarConfigEmailJS()">💾 Guardar</button>
-                        <button class="btn btn-outline-secondary btn-sm" onclick="probarEmailJS()">🧪 Probar Conexión</button>
+                    <div class="mb-3">
+                        <label class="form-label">Config EmailJS (Service, Template, Public Key)</label>
+                        <input type="text" id="cfg-emailjs" class="form-control mb-2" placeholder="Service ID">
+                        <input type="text" id="cfg-template" class="form-control mb-2" placeholder="Template ID">
+                        <input type="text" id="cfg-public" class="form-control" placeholder="Public Key">
+                        <button class="btn btn-sm btn-outline-secondary mt-2" onclick="guardarConfigEmailJS()">💾 Guardar Config</button>
                     </div>
                     <hr>
-                    <h6 class="mb-3">📅 Enviar Planificación Mensual</h6>
-                    <div class="row mb-3">
-                        <label class="col-sm-3 col-form-label">Mes:</label>
-                        <div class="col-sm-9">
-                            <select class="form-select" id="notif-mes">
-                                <option value="Enero">Enero</option><option value="Febrero">Febrero</option>
-                                <option value="Marzo">Marzo</option><option value="Abril">Abril</option>
-                                <option value="Mayo">Mayo</option><option value="Junio">Junio</option>
-                                <option value="Julio">Julio</option><option value="Agosto">Agosto</option>
-                                <option value="Septiembre">Septiembre</option><option value="Octubre">Octubre</option>
-                                <option value="Noviembre">Noviembre</option><option value="Diciembre">Diciembre</option>
-                            </select>
-                        </div>
-                    </div>
                     <div class="mb-3">
-                        <label class="form-label">Destinatarios (separados por coma)</label>
-                        <input type="text" class="form-control" id="notif-dest" placeholder="email1@disal.com, email2@disal.com">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Mensaje adicional</label>
-                        <textarea class="form-control" id="notif-msg" rows="2"></textarea>
+                        <label class="form-label">Enviar Planificación Mensual</label>
+                        <select class="form-select mb-2" id="notif-mes">
+                            <option value="Enero">Enero</option><option value="Febrero">Febrero</option>
+                            <option value="Marzo">Marzo</option><option value="Abril">Abril</option>
+                            <option value="Mayo" selected>Mayo</option><option value="Junio">Junio</option>
+                            <option value="Julio">Julio</option><option value="Agosto">Agosto</option>
+                            <option value="Septiembre">Septiembre</option><option value="Octubre">Octubre</option>
+                            <option value="Noviembre">Noviembre</option><option value="Diciembre">Diciembre</option>
+                        </select>
+                        <input type="text" id="notif-emails" class="form-control mb-2" placeholder="email1@disal.com, email2@disal.com">
+                        <textarea id="notif-msg" class="form-control" placeholder="Mensaje adicional..."></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-disal" id="btn-enviar-notif" onclick="enviarNotificacionPlanificacion()">📤 Enviar Planificación</button>
+                    <button class="btn btn-disal" id="btn-enviar-notif" onclick="enviarNotificacion()">📤 Enviar</button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Modal Solicitud -->
+    <div class="modal fade" id="modal-solicitud" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="background: var(--disal-primary); color: white;">
+                    <h5 class="modal-title">📝 Solicitar Verificación</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label>Equipo</label><select class="form-select" id="sol-equipo"></select></div>
+                    <div class="mb-3"><label>Motivo</label><textarea class="form-control" id="sol-motivo"></textarea></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-disal" onclick="enviarSolicitud()">Enviar Solicitud</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Registro (Admin) -->
+    <div class="modal fade" id="modal-registro" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="background: var(--disal-primary); color: white;">
+                    <h5 class="modal-title"> Registrar Verificación</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3"><label>Equipo</label><select class="form-select" id="reg-equipo"></select></div>
+                    <div class="mb-3"><label>Fecha</label><input type="date" class="form-control" id="reg-fecha"></div>
+                    <div class="mb-3"><label>Resultado</label>
+                        <select class="form-select" id="reg-resultado">
+                            <option value="Conforme">Conforme</option><option value="Ajuste">Requiere Ajuste</option>
+                            <option value="Desvío">Desvío</option>
+                        </select>
+                    </div>
+                    <div class="mb-3"><label>% Desvío (opcional)</label><input type="text" class="form-control" id="reg-desvio" placeholder="Ej: +2%"></div>
+                    <div class="mb-3"><label>Obs</label><textarea class="form-control" id="reg-obs"></textarea></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-disal" onclick="guardarVerificacion()">💾 Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
@@ -571,419 +358,276 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
+        // ==========================================
+        // DATOS REALES DE LA APLICACIÓN
+        // ==========================================
         const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
         
         let state = {
             usuario: null,
             esAdmin: false,
+            config: JSON.parse(localStorage.getItem('disal_config')) || { service: '', template: '', public: '' },
             equipos: [
+                // Látex Blanco (Crítico A)
                 { id: 1, nombre: 'TK3 LatBco', codigo: '00582', tipo: 'Látex Blanco', criticidad: 'A', mes: 'Enero', frec: 'Trimestral', estado: 'Conforme', ultimaVerif: '27/9/2025', obs: '', desvios: [] },
-                { id: 2, nombre: 'TK1 LatBco', codigo: '00592', tipo: 'Látex Blanco', criticidad: 'A', mes: 'Febrero', frec: 'Trimestral', estado: 'Desvío', ultimaVerif: '21/11/2025', obs: 'Múltiples verificaciones 2025', desvios: ['23/7/2025', '29/10/2025', '13/11/2025'] },
+                { id: 2, nombre: 'TK1 LatBco', codigo: '00592', tipo: 'Látex Blanco', criticidad: 'A', mes: 'Febrero', frec: 'Trimestral', estado: 'Desvío', ultimaVerif: '21/11/2025', obs: 'Historial de desvíos', desvios: ['23/7/2025', '29/10/2025', '13/11/2025'] },
                 { id: 3, nombre: 'TK2 LatBco', codigo: '00593', tipo: 'Látex Blanco', criticidad: 'A', mes: 'Marzo', frec: 'Cuatrimestral', estado: 'Conforme', ultimaVerif: '29/10/2025', obs: '', desvios: [] },
                 { id: 4, nombre: 'TK5 LatBco', codigo: '00626', tipo: 'Látex Blanco', criticidad: 'A', mes: 'Marzo', frec: 'Cuatrimestral', estado: 'Conforme', ultimaVerif: '23/5/2025', obs: '', desvios: [] },
                 { id: 5, nombre: 'TK6 LatBco', codigo: '00627', tipo: 'Látex Blanco', criticidad: 'A', mes: 'Enero', frec: 'Trimestral', estado: 'Conforme', ultimaVerif: '3/10/2025', obs: '', desvios: [] },
-                { id: 6, nombre: 'TK4 LatBco', codigo: '00700', tipo: 'Látex Blanco', criticidad: 'A', mes: 'Abril', frec: 'Trimestral', estado: 'Desvío', ultimaVerif: '5/11/2025', obs: 'Desvíos: 3.5%, +2%', desvios: ['23/7/2025 (3.5%)', '5/2/2025', '25/9/2025 (+2%)'] },
+                { id: 6, nombre: 'TK4 LatBco', codigo: '00700', tipo: 'Látex Blanco', criticidad: 'A', mes: 'Abril', frec: 'Trimestral', estado: 'Desvío', ultimaVerif: '5/11/2025', obs: 'Desvíos registrados', desvios: ['23/7/2025 (3.5%)', '25/9/2025 (+2%)'] },
+                
+                // Látex Color (Medio B)
                 { id: 7, nombre: 'TK N3 Látex Color', codigo: '00644', tipo: 'Látex Color', criticidad: 'B', mes: 'Marzo', frec: 'Semestral', estado: 'Conforme', ultimaVerif: '21/8/2025', obs: '', desvios: [] },
+                
+                // TER (Medio B)
                 { id: 8, nombre: 'TK3-TER', codigo: '00663', tipo: 'TER', criticidad: 'B', mes: 'Enero', frec: 'Semestral', estado: 'Conforme', ultimaVerif: '22/9/2025', obs: '', desvios: [] },
                 { id: 9, nombre: 'TK4-TER', codigo: '00664', tipo: 'TER', criticidad: 'B', mes: 'Enero', frec: 'Semestral', estado: 'Conforme', ultimaVerif: '1/2/2025', obs: '', desvios: [] },
-                { id: 10, nombre: 'TK5-TER', codigo: '00665', tipo: 'TER', criticidad: 'B', mes: 'Abril', frec: 'Trimestral', estado: 'Desvío', ultimaVerif: '30/11/2025', obs: 'Desvío -3.5%', desvios: ['10/7/2025 (-3.5%)', '25/3/2025', '23/7/2025', '16/8/2025', '29/8/2025', '23/9/2025'] },
+                { id: 10, nombre: 'TK5-TER', codigo: '00665', tipo: 'TER', criticidad: 'B', mes: 'Abril', frec: 'Trimestral', estado: 'Desvío', ultimaVerif: '30/11/2025', obs: 'Desvío -3.5%', desvios: ['10/7/2025 (-3.5%)'] },
                 { id: 11, nombre: 'TK6-TER', codigo: '00666', tipo: 'TER', criticidad: 'B', mes: 'Mayo', frec: 'Trimestral', estado: 'Desvío', ultimaVerif: '21/11/2025', obs: 'Ajuste 2%', desvios: ['23/9/2025 (ajuste 2%)'] },
+
+                // Sintéticos (Crítico A)
                 { id: 12, nombre: 'TK N6 Sint', codigo: '00640', tipo: 'Sintético', criticidad: 'A', mes: 'Junio', frec: 'Cuatrimestral', estado: 'Conforme', ultimaVerif: '18/11/2025', obs: '', desvios: [] },
                 { id: 13, nombre: 'TK N3 Sint', codigo: '00643', tipo: 'Sintético', criticidad: 'A', mes: 'Marzo', frec: 'Cuatrimestral', estado: 'Conforme', ultimaVerif: '22/8/2025', obs: '', desvios: [] },
-                { id: 14, nombre: 'TKN1 Sint', codigo: '00649', tipo: 'Sintético', criticidad: 'A', mes: 'Septiembre', frec: 'Cuatrimestral', estado: 'Conforme', ultimaVerif: '-', obs: 'Sin verificaciones 2025', desvios: [] },
+                { id: 14, nombre: 'TKN1 Sint', codigo: '00649', tipo: 'Sintético', criticidad: 'A', mes: 'Septiembre', frec: 'Cuatrimestral', estado: 'Conforme', ultimaVerif: '-', obs: 'Sin datos 2025', desvios: [] },
                 { id: 15, nombre: 'TKN2 Sint', codigo: '00650', tipo: 'Sintético', criticidad: 'A', mes: 'Abril', frec: 'Cuatrimestral', estado: 'Conforme', ultimaVerif: '22/8/2025', obs: '', desvios: [] },
-                { id: 16, nombre: 'TKN4 Sint', codigo: '00651', tipo: 'Sintético', criticidad: 'A', mes: 'Julio', frec: 'Cuatrimestral', estado: 'Conforme', ultimaVerif: '-', obs: 'Sin verificaciones 2025', desvios: [] },
+                { id: 16, nombre: 'TKN4 Sint', codigo: '00651', tipo: 'Sintético', criticidad: 'A', mes: 'Julio', frec: 'Cuatrimestral', estado: 'Conforme', ultimaVerif: '-', obs: '', desvios: [] },
                 { id: 17, nombre: 'TKN5 Sint', codigo: '00652', tipo: 'Sintético', criticidad: 'A', mes: 'Marzo', frec: 'Cuatrimestral', estado: 'Conforme', ultimaVerif: '28/10/2025', obs: '', desvios: [] },
                 { id: 18, nombre: 'TKN7 Sint', codigo: '00653', tipo: 'Sintético', criticidad: 'A', mes: 'Mayo', frec: 'Cuatrimestral', estado: 'Conforme', ultimaVerif: '30/9/2025', obs: '', desvios: [] },
-                { id: 19, nombre: 'TKN8 Sint', codigo: '00654', tipo: 'Sintético', criticidad: 'A', mes: 'Junio', frec: 'Cuatrimestral', estado: 'Conforme', ultimaVerif: '-', obs: 'Sin verificaciones 2025', desvios: [] },
-                { id: 20, nombre: 'TKN9 Sint', codigo: '00655', tipo: 'Sintético', criticidad: 'A', mes: 'Junio', frec: 'Cuatrimestral', estado: 'Conforme', ultimaVerif: '-', obs: 'Sin verificaciones 2025', desvios: [] },
-                { id: 21, nombre: 'TKN10 Sint', codigo: '00657', tipo: 'Sintético', criticidad: 'A', mes: 'Octubre', frec: 'Cuatrimestral', estado: 'Conforme', ultimaVerif: '-', obs: 'Sin verificaciones 2025', desvios: [] },
-                { id: 22, nombre: 'TKN11 Sint', codigo: '00658', tipo: 'Sintético', criticidad: 'A', mes: 'Octubre', frec: 'Cuatrimestral', estado: 'Conforme', ultimaVerif: '-', obs: 'Sin verificaciones 2025', desvios: [] },
+                { id: 19, nombre: 'TKN8 Sint', codigo: '00654', tipo: 'Sintético', criticidad: 'A', mes: 'Junio', frec: 'Cuatrimestral', estado: 'Conforme', ultimaVerif: '-', obs: '', desvios: [] },
+                { id: 20, nombre: 'TKN9 Sint', codigo: '00655', tipo: 'Sintético', criticidad: 'A', mes: 'Junio', frec: 'Cuatrimestral', estado: 'Conforme', ultimaVerif: '-', obs: '', desvios: [] },
+                { id: 21, nombre: 'TKN10 Sint', codigo: '00657', tipo: 'Sintético', criticidad: 'A', mes: 'Octubre', frec: 'Cuatrimestral', estado: 'Conforme', ultimaVerif: '-', obs: '', desvios: [] },
+                { id: 22, nombre: 'TKN11 Sint', codigo: '00658', tipo: 'Sintético', criticidad: 'A', mes: 'Octubre', frec: 'Cuatrimestral', estado: 'Conforme', ultimaVerif: '-', obs: '', desvios: [] },
                 { id: 23, nombre: 'TKN12 Sint', codigo: '00659', tipo: 'Sintético', criticidad: 'A', mes: 'Mayo', frec: 'Cuatrimestral', estado: 'Conforme', ultimaVerif: '24/9/2025', obs: '', desvios: [] },
                 { id: 24, nombre: 'TKN13 Sint', codigo: '00660', tipo: 'Sintético', criticidad: 'A', mes: 'Noviembre', frec: 'Cuatrimestral', estado: 'Conforme', ultimaVerif: '28/10/2025', obs: '', desvios: [] },
+
+                // Reactores / Resinas / Emulsiones
                 { id: 25, nombre: 'Reactor 2', codigo: '00141', tipo: 'Reactor', criticidad: 'C', mes: 'Mayo', frec: 'Anual', estado: 'Conforme', ultimaVerif: '29/7/2025', obs: '', desvios: [] },
-                { id: 26, nombre: 'Coloide', codigo: '00143', tipo: 'Emulsiones', criticidad: 'C', mes: 'Diciembre', frec: 'Anual', estado: 'Conforme', ultimaVerif: '-', obs: 'Sin verificaciones 2025', desvios: [] },
+                { id: 26, nombre: 'Coloide', codigo: '00143', tipo: 'Emulsiones', criticidad: 'C', mes: 'Diciembre', frec: 'Anual', estado: 'Conforme', ultimaVerif: '-', obs: 'Sin datos 2025', desvios: [] },
                 { id: 27, nombre: 'TK2-201', codigo: '00145', tipo: 'Emulsiones', criticidad: 'C', mes: 'Junio', frec: 'Anual', estado: 'Conforme', ultimaVerif: '29/7/2025', obs: '', desvios: [] },
                 { id: 28, nombre: 'TK2-101', codigo: '00146', tipo: 'Emulsiones', criticidad: 'C', mes: 'Mayo', frec: 'Anual', estado: 'Conforme', ultimaVerif: '30/7/2025', obs: '', desvios: [] },
                 { id: 29, nombre: 'Reactor 1', codigo: '00142', tipo: 'Reactor', criticidad: 'C', mes: 'Mayo', frec: 'Anual', estado: 'Conforme', ultimaVerif: '30/7/2025', obs: '', desvios: [] },
-                { id: 30, nombre: 'Reactor 2 Resinas', codigo: '00602', tipo: 'Resinas', criticidad: 'B', mes: 'Agosto', frec: 'Semestral', estado: 'Conforme', ultimaVerif: '-', obs: 'Sin verificaciones 2025', desvios: [] },
+                { id: 30, nombre: 'Reactor 2 Resinas', codigo: '00602', tipo: 'Resinas', criticidad: 'B', mes: 'Agosto', frec: 'Semestral', estado: 'Conforme', ultimaVerif: '-', obs: '', desvios: [] },
                 { id: 31, nombre: 'Reactor 1 Resinas', codigo: '00601', tipo: 'Resinas', criticidad: 'B', mes: 'Abril', frec: 'Semestral', estado: 'Conforme', ultimaVerif: '22/7/2025', obs: '', desvios: [] }
-            ],
-            solicitudes: [],
-            configEmailJS: {
-                serviceId: localStorage.getItem('disal_service') || '',
-                templateId: localStorage.getItem('disal_template') || '',
-                publicKey: localStorage.getItem('disal_public') || ''
-            }
+            ]
         };
 
+        // ==========================================
+        // INICIALIZACIÓN
+        // ==========================================
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('login-form').addEventListener('submit', handleLogin);
-            cargarConfigEmailJS();
-            renderTabla();
-            renderDashboard();
-            renderHistorial();
             cargarSelectEquipos();
+            // Restaurar config emailjs
+            if(state.config.public) emailjs.init(state.config.public);
         });
 
         function handleLogin(e) {
             e.preventDefault();
             const email = document.getElementById('login-email').value.trim();
             const pass = document.getElementById('login-pass').value;
-
-            if (!email.includes('@')) {
-                return Swal.fire('Error', 'Ingrese un email válido.', 'error');
-            }
-
             state.usuario = email;
             state.esAdmin = email.toLowerCase() === 'm3tr0l0giadisal@gmail.com';
-            
+
             if (state.esAdmin && pass !== 'disal2026') {
-                return Swal.fire('Acceso Denegado', 'Contraseña de administrador incorrecta.', 'error');
+                return Swal.fire('Error', 'Contraseña incorrecta', 'error');
             }
 
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('app-container').style.display = 'block';
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('app-container').classList.remove('hidden');
             document.getElementById('user-email-display').textContent = email;
             document.getElementById('user-role-badge').textContent = state.esAdmin ? 'Administrador' : 'Usuario';
             
-            if (state.esAdmin) {
-                document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('d-none'));
-            }
+            if (state.esAdmin) document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
             
-            Swal.fire({ icon: 'success', title: 'Bienvenido', text: `Sesión iniciada como ${state.esAdmin ? 'Administrador' : 'Usuario'}`, timer: 1500, showConfirmButton: false });
+            showSection('dashboard');
+            renderDashboard();
         }
 
-        function logout() {
-            location.reload();
-        }
+        function logout() { location.reload(); }
 
-        function showSection(section) {
-            document.querySelectorAll('.main-content > div').forEach(d => d.classList.add('d-none'));
-            document.getElementById(`section-${section}`).classList.remove('d-none');
+        function showSection(id) {
+            document.querySelectorAll('.main-content > div').forEach(d => d.classList.add('hidden'));
+            document.getElementById('section-' + id).classList.remove('hidden');
             document.querySelectorAll('.sidebar .nav-link').forEach(l => l.classList.remove('active'));
             event.currentTarget.classList.add('active');
-            if (section === 'dashboard') renderDashboard();
-            if (section === 'historial') renderHistorial();
-        }
-
-        function openModal(id) {
-            new bootstrap.Modal(document.getElementById(id)).show();
-        }
-
-        function cargarSelectEquipos() {
-            const selects = ['sol-equipo', 'reg-equipo'];
-            selects.forEach(selId => {
-                const sel = document.getElementById(selId);
-                if(!sel) return;
-                sel.innerHTML = '<option value="">Seleccionar...</option>';
-                const equiposUnicos = [];
-                const vistos = new Set();
-                state.equipos.forEach(eq => {
-                    if (!vistos.has(eq.codigo)) {
-                        vistos.add(eq.codigo);
-                        equiposUnicos.push(eq);
-                    }
-                });
-                equiposUnicos.forEach(eq => {
-                    sel.innerHTML += `<option value="${eq.codigo}" data-criticidad="${eq.criticidad}" data-frec="${eq.frec}">${eq.nombre} (${eq.codigo}) - Criticidad ${eq.criticidad}</option>`;
-                });
-            });
-        }
-
-        function renderTabla() {
-            const mesFiltro = document.getElementById('filter-mes').value;
-            const estadoFiltro = document.getElementById('filter-estado').value;
-            const criticidadFiltro = document.getElementById('filter-criticidad').value;
-            const tipoFiltro = document.getElementById('filter-tipo').value;
-            const buscar = document.getElementById('filter-buscar').value.toLowerCase();
             
+            if(id === 'dashboard') renderDashboard();
+            if(id === 'tabla') renderTabla();
+            if(id === 'historial') renderHistorial();
+        }
+
+        function openModal(id) { new bootstrap.Modal(document.getElementById(id)).show(); }
+
+        // ==========================================
+        // RENDERIZADO
+        // ==========================================
+        function renderTabla() {
             const tbody = document.getElementById('tabla-planificacion');
             tbody.innerHTML = '';
+            
+            const filtros = {
+                mes: document.getElementById('filter-mes').value,
+                estado: document.getElementById('filter-estado').value,
+                criticidad: document.getElementById('filter-criticidad').value,
+                tipo: document.getElementById('filter-tipo').value,
+                buscar: document.getElementById('filter-buscar').value.toLowerCase()
+            };
 
-            const filtrados = state.equipos.filter(eq => {
-                const matchMes = mesFiltro === 'todos' || eq.mes === mesFiltro;
-                const matchEstado = estadoFiltro === 'todos' || eq.estado === estadoFiltro;
-                const matchCriticidad = criticidadFiltro === 'todos' || eq.criticidad === criticidadFiltro;
-                const matchTipo = tipoFiltro === 'todos' || eq.tipo === tipoFiltro;
-                const matchBuscar = eq.nombre.toLowerCase().includes(buscar) || eq.codigo.toLowerCase().includes(buscar);
-                return matchMes && matchEstado && matchCriticidad && matchTipo && matchBuscar;
+            const datos = state.equipos.filter(e => {
+                return (filtros.mes === 'todos' || e.mes === filtros.mes) &&
+                       (filtros.estado === 'todos' || e.estado === filtros.estado) &&
+                       (filtros.criticidad === 'todos' || e.criticidad === filtros.criticidad) &&
+                       (filtros.tipo === 'todos' || e.tipo === filtros.tipo) &&
+                       (e.nombre.toLowerCase().includes(filtros.buscar) || e.codigo.includes(filtros.buscar));
             });
 
-            filtrados.forEach(eq => {
-                let badgeClass = 'status-conforme';
-                if (eq.estado === 'Atención') badgeClass = 'status-atencion';
-                if (eq.estado === 'Desvío') badgeClass = 'status-desvio';
+            datos.forEach(e => {
+                let statusClass = 'bg-conforme';
+                if(e.estado === 'Atención') statusClass = 'bg-atencion';
+                if(e.estado === 'Desvío') statusClass = 'bg-desvio';
                 
                 let critClass = 'criticidad-C';
-                if (eq.criticidad === 'A') critClass = 'criticidad-A';
-                if (eq.criticidad === 'B') critClass = 'criticidad-B';
+                if(e.criticidad === 'A') critClass = 'criticidad-A';
+                if(e.criticidad === 'B') critClass = 'criticidad-B';
 
-                const refuerzoBadge = (eq.frec === 'Trimestral' && eq.desvios.length > 0) ? '<span class="refuerzo-badge">REFUERZO</span>' : '';
-                const desvioBadge = eq.desvios.length > 0 ? `<span class="desvio-badge">${eq.desvios.length} desvío(s)</span>` : '';
+                const refuerzo = e.frec === 'Trimestral' ? '<span class="bg-refuerzo">REFUERZO</span>' : '';
+                const badgeDesvio = e.desvios.length > 0 ? `<span class="text-danger ms-1"><i class="fas fa-exclamation-triangle"></i> ${e.desvios.length}</span>` : '';
 
                 tbody.innerHTML += `
                     <tr>
-                        <td><strong>${eq.nombre}</strong> ${refuerzoBadge}</td>
-                        <td>${eq.codigo}</td>
-                        <td><span class="badge bg-secondary">${eq.tipo}</span></td>
-                        <td><span class="status-badge ${critClass}">Nivel ${eq.criticidad}</span></td>
-                        <td>${eq.mes}</td>
-                        <td>${eq.frec}</td>
-                        <td><span class="status-badge ${badgeClass}">${eq.estado}</span> ${desvioBadge}</td>
-                        <td>${eq.ultimaVerif}</td>
-                        <td>${eq.obs || '-'}</td>
+                        <td><strong>${e.nombre}</strong> ${refuerzo}</td>
+                        <td>${e.codigo}</td>
+                        <td><span class="badge bg-secondary">${e.tipo}</span></td>
+                        <td><span class="badge ${critClass}">Nivel ${e.criticidad}</span></td>
+                        <td>${e.mes}</td>
+                        <td>${e.frec}</td>
+                        <td><span class="badge-status ${statusClass}">${e.estado}</span>${badgeDesvio}</td>
+                        <td>${e.ultimaVerif}</td>
+                        <td class="small text-muted">${e.obs || '-'}</td>
                     </tr>
                 `;
             });
             
-            if (filtrados.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="9" class="text-center text-muted py-4">No se encontraron registros</td></tr>';
-            }
+            if(datos.length === 0) tbody.innerHTML = '<tr><td colspan="9" class="text-center text-muted py-4">Sin resultados</td></tr>';
         }
 
         function renderHistorial() {
             const tbody = document.getElementById('tabla-historial');
             tbody.innerHTML = '';
+            const historial = state.equipos.filter(e => e.desvios.length > 0 || e.ultimaVerif !== '-');
             
-            const equiposConHistorial = state.equipos.filter(eq => eq.desvios.length > 0 || eq.ultimaVerif !== '-');
-            
-            equiposConHistorial.forEach(eq => {
-                const desviosText = eq.desvios.length > 0 ? eq.desvios.join(', ') : 'Sin desvíos';
-                const tieneDesvios = eq.desvios.some(d => d.includes('%') || d.includes('ajuste'));
-                
+            historial.forEach(e => {
                 tbody.innerHTML += `
                     <tr>
-                        <td><strong>${eq.codigo}</strong></td>
-                        <td>${eq.nombre}</td>
-                        <td>${eq.tipo}</td>
-                        <td>${eq.ultimaVerif}</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>${tieneDesvios ? '<span class="text-danger"><i class="fas fa-exclamation-triangle"></i> ' + desviosText : '<span class="text-success">Sin desvíos</span>'}</td>
+                        <td><strong>${e.codigo}</strong></td>
+                        <td>${e.nombre}</td>
+                        <td>${e.tipo}</td>
+                        <td>${e.ultimaVerif}</td>
+                        <td>${e.desvios.length > 0 ? '<span class="text-danger"><i class="fas fa-exclamation-circle"></i> ' + e.desvios.join(', ') : '<span class="text-success">Sin desvíos</span>'}</td>
                     </tr>
                 `;
             });
         }
 
         function renderDashboard() {
-            const total = state.equipos.length;
-            const conformes = state.equipos.filter(e => e.estado === 'Conforme').length;
-            const atencion = state.equipos.filter(e => e.estado === 'Atención').length;
-            const desvios = state.equipos.filter(e => e.estado === 'Desvío').length;
-            const reforzado = state.equipos.filter(e => e.frec === 'Trimestral').length;
-            const critA = state.equipos.filter(e => e.criticidad === 'A').length;
-            const totalVerif2025 = state.equipos.reduce((acc, eq) => acc + (eq.desvios.length > 0 ? eq.desvios.length : 1), 0);
+            document.getElementById('stat-total').textContent = state.equipos.length;
+            document.getElementById('stat-conforme').textContent = state.equipos.filter(e => e.estado === 'Conforme').length;
+            document.getElementById('stat-atencion').textContent = state.equipos.filter(e => e.estado === 'Atención').length;
+            document.getElementById('stat-desvio').textContent = state.equipos.filter(e => e.estado === 'Desvío').length;
 
-            document.getElementById('stat-total').textContent = total;
-            document.getElementById('stat-conforme').textContent = conformes;
-            document.getElementById('stat-atencion').textContent = atencion;
-            document.getElementById('stat-desvio').textContent = desvios;
-            document.getElementById('stat-reforzado').textContent = reforzado;
-            document.getElementById('stat-crit-a').textContent = critA;
-            document.getElementById('stat-hist-2025').textContent = totalVerif2025;
-
-            const ctxM = document.getElementById('chart-mensual');
-            if(ctxM) {
-                const dataMensual = MESES.map(m => state.equipos.filter(e => e.mes === m).length);
-                new Chart(ctxM, {
+            const ctx1 = document.getElementById('chart-mensual');
+            if(ctx1) {
+                new Chart(ctx1, {
                     type: 'bar',
-                    data: {
+                     {
                         labels: MESES,
                         datasets: [{
-                            label: 'Equipos a verificar',
-                            data: dataMensual,
-                            backgroundColor: dataMensual.map(v => v > 4 ? '#EF4444' : v > 2 ? '#F59E0B' : '#10B981'),
-                            borderRadius: 6
+                            label: 'Verificaciones Planificadas',
+                             MESES.map(m => state.equipos.filter(e => e.mes === m).length),
+                            backgroundColor: '#2563EB', borderRadius: 4
                         }]
                     },
-                    options: { 
-                        responsive: true, 
-                        plugins: { legend: { display: false } }, 
-                        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } 
-                    }
+                    options: { responsive: true, plugins: { legend: { display: false } } }
+                });
+            }
+
+            const ctx2 = document.getElementById('chart-estado');
+            if(ctx2) {
+                new Chart(ctx2, {
+                    type: 'doughnut',
+                     {
+                        labels: ['Conforme', 'Atención', 'Desvío'],
+                        datasets: [{
+                             [
+                                state.equipos.filter(e => e.estado === 'Conforme').length,
+                                state.equipos.filter(e => e.estado === 'Atención').length,
+                                state.equipos.filter(e => e.estado === 'Desvío').length
+                            ],
+                            backgroundColor: ['#10B981', '#F59E0B', '#EF4444']
+                        }]
+                    },
+                    options: { responsive: true }
                 });
             }
         }
 
-        function exportCSV() {
-            let csv = 'Equipo,Codigo,Tipo,Criticidad,Mes,Frecuencia,Estado,UltimaVerificacion,Observaciones\n';
-            state.equipos.forEach(e => {
-                csv += `"${e.nombre}","${e.codigo}","${e.tipo}","${e.criticidad}","${e.mes}","${e.frec}","${e.estado}","${e.ultimaVerif}","${e.obs}"\n`;
-            });
-            downloadFile(csv, 'planificacion_disal_2026.csv', 'text/csv');
-        }
-
-        function exportJSON() {
-            const json = JSON.stringify(state.equipos, null, 2);
-            downloadFile(json, 'planificacion_disal_2026.json', 'application/json');
-        }
-
-        function downloadFile(content, fileName, contentType) {
-            const a = document.createElement('a');
-            const file = new Blob([content], { type: contentType });
-            a.href = URL.createObjectURL(file);
-            a.download = fileName;
-            a.click();
-        }
-
-        function enviarSolicitud() {
-            const equipo = document.getElementById('sol-equipo').value;
-            const tipo = document.getElementById('sol-tipo').value;
-            const urgencia = document.getElementById('sol-urgencia').value;
-            const email = document.getElementById('sol-email').value;
-            const motivo = document.getElementById('sol-motivo').value;
-
-            if (!equipo || !motivo) return Swal.fire('Campos incompletos', 'Seleccione equipo y detalle el motivo.', 'warning');
-
-            state.solicitudes.push({ id: Date.now(), equipo, tipo, urgencia, email, motivo, fecha: new Date().toISOString(), estado: 'Pendiente' });
-            
-            Swal.fire('✅ Enviada', 'La solicitud ha sido registrada correctamente.', 'success');
-            bootstrap.Modal.getInstance(document.getElementById('modal-solicitud')).hide();
-            document.getElementById('sol-motivo').value = '';
-        }
-
-        function checkRequiereAjuste() {
-            const resultado = document.getElementById('reg-resultado').value;
-            if (resultado === 'Ajuste' || resultado === 'Desvío' || resultado === 'Fuera') {
-                document.getElementById('reg-desvio-pct').parentElement.style.display = 'block';
-            } else {
-                document.getElementById('reg-desvio-pct').parentElement.style.display = 'none';
-            }
-        }
-
-        function guardarVerificacion() {
-            if (!state.esAdmin) return Swal.fire('Acceso Restringido', 'Solo administradores pueden registrar verificaciones.', 'error');
-            
-            const codigo = document.getElementById('reg-equipo').value;
-            const fecha = document.getElementById('reg-fecha').value;
-            const resultado = document.getElementById('reg-resultado').value;
-            const desvioPct = document.getElementById('reg-desvio-pct').value;
-            const obs = document.getElementById('reg-obs').value;
-            const emailNotif = document.getElementById('reg-email-notif').value;
-
-            if (!codigo || !fecha) return Swal.fire('Datos faltantes', 'Seleccione equipo y fecha.', 'warning');
-
-            state.equipos.forEach(eq => {
-                if (eq.codigo === codigo) {
-                    eq.estado = resultado === 'Fuera' ? 'Desvío' : resultado;
-                    eq.ultimaVerif = fecha;
-                    if (desvioPct) {
-                        eq.desvios.push(`${fecha} (${desvioPct})`);
-                        eq.obs = `Desvío registrado: ${desvioPct}. ${obs}`;
-                        eq.frec = 'Trimestral';
-                    } else if (obs) {
-                        eq.obs = obs;
-                    }
-                    
-                    if (resultado === 'Ajuste' || resultado === 'Desvío' || resultado === 'Fuera') {
-                        eq.frec = 'Trimestral';
-                    }
-                }
-            });
-            
-            renderTabla();
-            renderDashboard();
-
-            if (emailNotif && state.configEmailJS.publicKey) {
-                emailjs.init(state.configEmailJS.publicKey);
-                emailjs.send(state.configEmailJS.serviceId, state.configEmailJS.templateId, {
-                    to_email: emailNotif,
-                    subject: `Resultado Verificación ${codigo}`,
-                    message: `El equipo ${codigo} ha sido verificado con resultado: ${resultado}. ${desvioPct ? 'Desvío: ' + desvioPct : ''} Obs: ${obs}`
-                }).catch(err => console.log(err));
-            }
-
-            Swal.fire('✅ Guardado', 'Registro actualizado correctamente.', 'success');
-            bootstrap.Modal.getInstance(document.getElementById('modal-registro')).hide();
-        }
-
+        // ==========================================
+        // PDF GENERATION ROBUSTA
+        // ==========================================
         function generarPDF() {
             const mes = document.getElementById('mes-print').value;
-            const notas = document.getElementById('notas-print').value || '';
-            
+            const notas = document.getElementById('notas-print').value;
             const btn = event.target;
             btn.disabled = true;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Generando...';
+            btn.innerHTML = 'Generando...';
 
-            let datos = state.equipos.filter(e => e.mes === mes);
-
+            // Filtrar
+            let datos = mes === 'todos' ? state.equipos : state.equipos.filter(e => e.mes === mes);
+            
             const div = document.createElement('div');
             div.style.padding = '20px';
-            div.style.width = '1120px';
-            div.style.backgroundColor = '#ffffff';
+            div.style.width = '1120px'; // Landscape width approx
             div.style.fontFamily = 'Segoe UI, sans-serif';
-            div.style.color = '#1F2937';
+            div.style.fontSize = '12px';
 
+            // Header
             div.innerHTML += `
                 <div style="text-align:center; border-bottom:3px solid #1E3A8A; padding-bottom:15px; margin-bottom:20px;">
-                    <h2 style="margin:0; color:#1E3A8A; font-size:24px;">GRUPO DISAL</h2>
-                    <p style="margin:5px 0 0; color:#6B7280; font-size:12px;">VILLA MERCEDES | SISTEMA DE GESTIÓN DE METROLOGÍA</p>
-                    <h3 style="margin:15px 0 5px; color:#334155; font-size:18px;">PLANIFICACIÓN DE VERIFICACIONES - TANQUES</h3>
-                    <p style="margin:0; color:#4B5563; font-size:14px;">Período: <strong>${mes} 2026</strong> | Generado: ${new Date().toLocaleDateString('es-AR')}</p>
+                    <h2 style="margin:0; color:#1E3A8A;">GRUPO DISAL</h2>
+                    <p style="margin:5px 0; color:#666;">VILLA MERCEDES | METROLOGÍA</p>
+                    <h3 style="margin:10px 0; color:#333;">PLANIFICACIÓN DE VERIFICACIONES 2026</h3>
+                    <p style="margin:0; color:#555;">Período: <strong>${mes === 'todos' ? 'AÑO COMPLETO' : mes.toUpperCase()}</strong> | Generado: ${new Date().toLocaleDateString()}</p>
                 </div>
             `;
 
-            const totalEq = datos.length;
-            const critA = datos.filter(e => e.criticidad === 'A').length;
-            const critB = datos.filter(e => e.criticidad === 'B').length;
-            const critC = datos.filter(e => e.criticidad === 'C').length;
-            
-            div.innerHTML += `
-                <div style="background:#EFF6FF; padding:10px; border-radius:6px; margin-bottom:15px; font-size:12px; display:flex; justify-content:space-around;">
-                    <span><strong>Total equipos:</strong> ${totalEq}</span>
-                    <span><strong>Crit A:</strong> ${critA}</span>
-                    <span><strong>Crit B:</strong> ${critB}</span>
-                    <span><strong>Crit C:</strong> ${critC}</span>
-                </div>
-            `;
+            // Tabla
+            let html = '<table style="width:100%; border-collapse:collapse; margin-bottom:20px;">';
+            html += '<thead><tr style="background:#1E3A8A; color:white;">';
+            html += '<th style="padding:8px; border:1px solid #ddd; text-align:left;">Equipo</th><th style="padding:8px; border:1px solid #ddd; text-align:left;">Código</th>';
+            html += '<th style="padding:8px; border:1px solid #ddd;">Tipo</th><th style="padding:8px; border:1px solid #ddd;">Mes</th><th style="padding:8px; border:1px solid #ddd;">Estado</th><th style="padding:8px; border:1px solid #ddd;">Obs</th>';
+            html += '</tr></thead><tbody>';
 
-            let tableHTML = `<table style="width:100%; border-collapse:collapse; font-size:11px; margin-bottom:20px;">
-                <thead>
-                    <tr style="background:#1E3A8A; color:white;">
-                        <th style="padding:8px; border:1px solid #E2E8F0; text-align:left;">Equipo</th>
-                        <th style="padding:8px; border:1px solid #E2E8F0; text-align:left;">Código</th>
-                        <th style="padding:8px; border:1px solid #E2E8F0; text-align:left;">Tipo</th>
-                        <th style="padding:8px; border:1px solid #E2E8F0; text-align:center;">Crit.</th>
-                        <th style="padding:8px; border:1px solid #E2E8F0; text-align:center;">Frec.</th>
-                        <th style="padding:8px; border:1px solid #E2E8F0; text-align:center;">Estado</th>
-                        <th style="padding:8px; border:1px solid #E2E8F0; text-align:left;">Última Verif.</th>
-                        <th style="padding:8px; border:1px solid #E2E8F0; text-align:left;">Obs.</th>
-                    </tr>
-                </thead><tbody>`;
-
-            datos.forEach((e, i) => {
-                let bg = i%2===0 ? '#FFFFFF' : '#F8FAFC';
-                let color = '#10B981', label = 'Conforme';
-                if(e.estado==='Atención'){ color='#F59E0B'; label='Atención'; }
-                if(e.estado==='Desvío'){ color='#EF4444'; label='Desvío'; }
-                
-                let critColor = '#10B981';
-                if(e.criticidad==='A') critColor = '#EF4444';
-                if(e.criticidad==='B') critColor = '#F59E0B';
-
-                tableHTML += `<tr style="background:${bg};">
-                    <td style="padding:8px; border:1px solid #E2E8F0;">${e.nombre}</td>
-                    <td style="padding:8px; border:1px solid #E2E8F0;">${e.codigo}</td>
-                    <td style="padding:8px; border:1px solid #E2E8F0;">${e.tipo}</td>
-                    <td style="padding:8px; border:1px solid #E2E8F0; text-align:center; color:${critColor}; font-weight:bold;">${e.criticidad}</td>
-                    <td style="padding:8px; border:1px solid #E2E8F0; text-align:center;">${e.frec}</td>
-                    <td style="padding:8px; border:1px solid #E2E8F0; text-align:center; color:${color}; font-weight:600;">${label}</td>
-                    <td style="padding:8px; border:1px solid #E2E8F0;">${e.ultimaVerif}</td>
-                    <td style="padding:8px; border:1px solid #E2E8F0; font-size:10px;">${e.obs||'-'}</td>
-                </tr>`;
-            });
-            tableHTML += '</tbody></table>';
-            div.innerHTML += tableHTML;
-
-            if(notas) {
-                div.innerHTML += `<div style="background:#FFF7ED; border-left:4px solid #F59E0B; padding:10px; margin-bottom:20px; font-size:12px;"><strong>Notas:</strong> ${notas}</div>`;
+            // Si es todos los meses, agrupar
+            if(mes === 'todos') {
+                MESES.forEach(m => {
+                    const datosMes = datos.filter(e => e.mes === m);
+                    if(datosMes.length > 0) {
+                        html += `<tr style="background:#F1F5F9;"><td colspan="6" style="padding:5px; font-weight:bold; color:#1E3A8A;"> ${m}</td></tr>`;
+                        datosMes.forEach(e => {
+                            html += `<tr><td style="padding:6px; border:1px solid #ddd;">${e.nombre}</td><td style="padding:6px; border:1px solid #ddd;">${e.codigo}</td><td style="padding:6px; border:1px solid #ddd; text-align:center;">${e.tipo}</td><td style="padding:6px; border:1px solid #ddd; text-align:center;">${e.mes}</td><td style="padding:6px; border:1px solid #ddd; text-align:center; color:${e.estado==='Desvío'?'red':'green'}">${e.estado}</td><td style="padding:6px; border:1px solid #ddd;">${e.obs||''}</td></tr>`;
+                        });
+                    }
+                });
+            } else {
+                datos.forEach(e => {
+                    html += `<tr><td style="padding:6px; border:1px solid #ddd;">${e.nombre}</td><td style="padding:6px; border:1px solid #ddd;">${e.codigo}</td><td style="padding:6px; border:1px solid #ddd; text-align:center;">${e.tipo}</td><td style="padding:6px; border:1px solid #ddd; text-align:center;">${e.mes}</td><td style="padding:6px; border:1px solid #ddd; text-align:center; color:${e.estado==='Desvío'?'red':'green'}">${e.estado}</td><td style="padding:6px; border:1px solid #ddd;">${e.obs||''}</td></tr>`;
+                });
             }
+            html += '</tbody></table>';
+            div.innerHTML += html;
 
-            div.innerHTML += `<div style="text-align:center; font-size:10px; color:#6B7280; border-top:1px solid #E2E8F0; padding-top:10px;">
-                Documento generado automáticamente por Sistema Metrología Disal | m3tr0l0giadisal@gmail.com
-            </div>`;
+            if(notas) div.innerHTML += `<div style="margin-top:20px; padding:10px; background:#FFF7ED; border-left:4px solid orange;"><strong>Notas:</strong> ${notas}</div>`;
+            div.innerHTML += `<div style="text-align:center; margin-top:30px; font-size:10px; color:#999;">Documento generado por Sistema Metrología Disal</div>`;
 
             div.style.position = 'absolute';
             div.style.left = '-9999px';
@@ -991,106 +635,101 @@
 
             const opt = {
                 margin: 10,
-                filename: `Disal_Planificacion_${mes}_2026.pdf`,
+                filename: mes === 'todos' ? 'Planificacion_Anual_2026.pdf' : `Planificacion_${mes}_2026.pdf`,
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2, useCORS: true, width: 1120 },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
-                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
             };
 
             html2pdf().set(opt).from(div).save().then(() => {
                 document.body.removeChild(div);
                 btn.disabled = false;
                 btn.innerHTML = '🖨️ Generar PDF';
-                Swal.fire({ icon: 'success', title: 'PDF Generado', timer: 2000, showConfirmButton: false });
-            }).catch(err => {
-                console.error(err);
-                document.body.removeChild(div);
-                btn.disabled = false;
-                btn.innerHTML = '🖨️ Generar PDF';
-                Swal.fire('Error', 'No se pudo generar el PDF.', 'error');
+                bootstrap.Modal.getInstance(document.getElementById('modal-print')).hide();
+                Swal.fire('Éxito', 'PDF descargado', 'success');
             });
         }
 
-        function cargarConfigEmailJS() {
-            document.getElementById('cfg-service').value = state.configEmailJS.serviceId;
-            document.getElementById('cfg-template').value = state.configEmailJS.templateId;
-            document.getElementById('cfg-public').value = state.configEmailJS.publicKey;
+        // ==========================================
+        // FUNCIONES AUXILIARES
+        // ==========================================
+        function cargarSelectEquipos() {
+            const selects = ['sol-equipo', 'reg-equipo'];
+            const uniques = [...new Set(state.equipos.map(e => JSON.stringify({nombre: e.nombre, codigo: e.codigo})))].map(s => JSON.parse(s));
+            selects.forEach(id => {
+                const sel = document.getElementById(id);
+                if(sel) {
+                    sel.innerHTML = '<option value="">Seleccionar...</option>';
+                    uniques.forEach(u => sel.innerHTML += `<option value="${u.codigo}">${u.nombre} (${u.codigo})</option>`);
+                }
+            });
+        }
+
+        function enviarSolicitud() {
+            const eq = document.getElementById('sol-equipo').value;
+            const motivo = document.getElementById('sol-motivo').value;
+            if(!eq || !motivo) return Swal.fire('Error', 'Complete los campos', 'warning');
+            Swal.fire('Enviado', 'Solicitud registrada', 'success');
+            bootstrap.Modal.getInstance(document.getElementById('modal-solicitud')).hide();
+        }
+
+        function guardarVerificacion() {
+            const eqCodigo = document.getElementById('reg-equipo').value;
+            const res = document.getElementById('reg-resultado').value;
+            const obs = document.getElementById('reg-obs').value;
+            const desvio = document.getElementById('reg-desvio').value;
+            
+            const idx = state.equipos.findIndex(e => e.codigo === eqCodigo);
+            if(idx !== -1) {
+                state.equipos[idx].estado = res === 'Desvío' ? 'Desvío' : 'Conforme';
+                if(desvio) state.equipos[idx].desvios.push(new Date().toLocaleDateString() + ' (' + desvio + ')');
+                if(obs) state.equipos[idx].obs = obs;
+                renderTabla();
+                Swal.fire('Guardado', 'Registro actualizado', 'success');
+            }
         }
 
         function guardarConfigEmailJS() {
-            state.configEmailJS.serviceId = document.getElementById('cfg-service').value;
-            state.configEmailJS.templateId = document.getElementById('cfg-template').value;
-            state.configEmailJS.publicKey = document.getElementById('cfg-public').value;
-            
-            localStorage.setItem('disal_service', state.configEmailJS.serviceId);
-            localStorage.setItem('disal_template', state.configEmailJS.templateId);
-            localStorage.setItem('disal_public', state.configEmailJS.publicKey);
-            
-            Swal.fire('✅ Guardado', 'Configuración EmailJS actualizada.', 'success');
+            state.config.service = document.getElementById('cfg-emailjs').value;
+            state.config.template = document.getElementById('cfg-template').value;
+            state.config.public = document.getElementById('cfg-public').value;
+            localStorage.setItem('disal_config', JSON.stringify(state.config));
+            if(state.config.public) emailjs.init(state.config.public);
+            Swal.fire('Guardado', 'Configuración actualizada', 'success');
         }
 
-        function probarEmailJS() {
-            if(!state.configEmailJS.publicKey) return Swal.fire('Falta Key', 'Ingrese la Public Key primero.', 'warning');
-            emailjs.init(state.configEmailJS.publicKey);
-            const btn = event.target;
-            btn.innerHTML = '⏳ Probando...';
-            emailjs.send(state.configEmailJS.serviceId, state.configEmailJS.templateId, { to_email: state.usuario, message: 'Test de conexión exitoso' })
-                .then(() => { btn.innerHTML = '🧪 Probar Conexión'; Swal.fire('✅ Éxito', 'Conexión establecida.', 'success'); })
-                .catch(() => { btn.innerHTML = '🧪 Probar Conexión'; Swal.fire('❌ Error', 'Verifica tus credenciales de EmailJS.', 'error'); });
-        }
-
-        function enviarNotificacionPlanificacion() {
-            const mes = document.getElementById('notif-mes').value;
-            const emailsRaw = document.getElementById('notif-dest').value;
-            const msgAdd = document.getElementById('notif-msg').value;
+        function enviarNotificacion() {
+            if(!state.config.public) return Swal.fire('Error', 'Configure EmailJS primero', 'error');
             const btn = document.getElementById('btn-enviar-notif');
-
-            const emails = emailsRaw.split(',').map(e => e.trim()).filter(e => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e));
-            if (emails.length === 0) return Swal.fire('Error', 'Ingresa al menos un email válido separado por comas.', 'error');
-            if (!state.configEmailJS.publicKey) return Swal.fire('Configuración', 'Configura EmailJS primero.', 'warning');
-
             btn.disabled = true;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Enviando...';
-
-            emailjs.init(state.configEmailJS.publicKey);
-            const datosMes = state.equipos.filter(e => e.mes === mes);
             
-            let tablaEmail = `<table style="border-collapse:collapse; width:100%; font-size:12px; margin-top:10px;">
-                <tr style="background:#1E3A8A; color:white;"><th style="padding:6px; border:1px solid #ccc;">Equipo</th><th style="padding:6px; border:1px solid #ccc;">Código</th><th style="padding:6px; border:1px solid #ccc;">Criticidad</th><th style="padding:6px; border:1px solid #ccc;">Estado</th></tr>`;
-            datosMes.forEach(e => {
-                let color = e.estado === 'Conforme' ? 'green' : e.estado === 'Desvío' ? 'red' : 'orange';
-                tablaEmail += `<tr><td style="padding:6px; border:1px solid #ccc;">${e.nombre}</td><td style="padding:6px; border:1px solid #ccc;">${e.codigo}</td><td style="padding:6px; border:1px solid #ccc;">${e.criticidad}</td><td style="padding:6px; border:1px solid #ccc; color:${color}; font-weight:bold;">${e.estado}</td></tr>`;
+            emailjs.send(state.config.service, state.config.template, {
+                to_email: document.getElementById('notif-emails').value,
+                message: document.getElementById('notif-msg').value,
+                mes: document.getElementById('notif-mes').value
+            }).then(() => {
+                Swal.fire('Enviado', 'Notificación enviada', 'success');
+                btn.disabled = false;
+            }).catch(() => {
+                Swal.fire('Error', 'Fallo en el envío', 'error');
+                btn.disabled = false;
             });
-            tablaEmail += '</table>';
+        }
 
-            const templateParams = {
-                to_email: emails.join(', '),
-                subject: `Planificación Verificación Tanques - ${mes} 2026 | Grupo Disal`,
-                message: `
-                    <h3 style="color:#1E3A8A;">Planificación Mensual - ${mes} 2026</h3>
-                    <p>Estimados, se adjunta la planificación de verificaciones correspondiente al mes de <strong>${mes}</strong>.</p>
-                    <p><strong>Total equipos:</strong> ${datosMes.length}</p>
-                    ${tablaEmail}
-                    <p style="margin-top:15px; font-size:11px; color:#666;">${msgAdd}</p>
-                    <hr>
-                    <small>Sistema de Gestión de Metrología - Grupo Disal Villa Mercedes</small>
-                `
-            };
+        function exportCSV() {
+            let csv = 'Equipo,Codigo,Tipo,Estado,Obs\n';
+            state.equipos.forEach(e => csv += `${e.nombre},${e.codigo},${e.tipo},${e.estado},"${e.obs}"\n`);
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([csv]));
+            a.download = 'planificacion.csv';
+            a.click();
+        }
 
-            emailjs.send(state.configEmailJS.serviceId, state.configEmailJS.templateId, templateParams)
-                .then(() => {
-                    Swal.fire('✅ Enviado', `Notificación enviada a ${emails.length} destinatario(s).`, 'success');
-                    bootstrap.Modal.getInstance(document.getElementById('modal-notif')).hide();
-                })
-                .catch(err => {
-                    console.error(err);
-                    Swal.fire('❌ Error', 'Falló el envío. Revisa la consola o tu configuración EmailJS.', 'error');
-                })
-                .finally(() => {
-                    btn.disabled = false;
-                    btn.innerHTML = '📤 Enviar Planificación';
-                });
+        function exportJSON() {
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([JSON.stringify(state.equipos, null, 2)]));
+            a.download = 'datos.json';
+            a.click();
         }
     </script>
 </body>
