@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📊 Verificación Interna de Tanques 2026 - Grupo Disal</title>
     
-    <!-- CDN Externos -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
@@ -36,7 +35,6 @@
             padding: 0;
         }
 
-        /* Login Screen */
         #login-screen {
             height: 100vh;
             display: flex;
@@ -62,7 +60,6 @@
         .form-control { border-radius: 8px; border: 1px solid var(--disal-border); padding: 0.75rem; }
         .form-control:focus { border-color: var(--disal-accent); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
 
-        /* Main App */
         #app-container { display: none; }
         .top-bar {
             background: var(--disal-primary);
@@ -108,7 +105,6 @@
             min-height: calc(100vh - 60px);
         }
 
-        /* Cards & Stats */
         .stat-card {
             background: var(--disal-card);
             border-radius: 12px;
@@ -120,10 +116,10 @@
         .stat-card.success { border-left-color: var(--disal-success); }
         .stat-card.warning { border-left-color: var(--disal-warning); }
         .stat-card.danger { border-left-color: var(--disal-danger); }
+        .stat-card.info { border-left-color: var(--disal-info); }
         .stat-value { font-size: 2rem; font-weight: 700; margin: 0.5rem 0; }
         .stat-label { color: var(--disal-text-light); font-size: 0.9rem; }
 
-        /* Table */
         .table-container {
             background: var(--disal-card);
             border-radius: 12px;
@@ -139,20 +135,23 @@
         .status-atencion { background: #FEF3C7; color: #92400E; }
         .status-desvio { background: #FEE2E2; color: #991B1B; }
         .status-especial { background: #DBEAFE; color: #1E40AF; }
+        .criticidad-A { background: #FEE2E2; color: #991B1B; border: 2px solid #EF4444; }
+        .criticidad-B { background: #FEF3C7; color: #92400E; border: 2px solid #F59E0B; }
+        .criticidad-C { background: #D1FAE5; color: #065F46; border: 2px solid #10B981; }
+        .historial-badge { background: #6B7280; color: white; padding: 2px 6px; border-radius: 10px; font-size: 0.7rem; margin-left: 5px; }
 
-        /* Filters */
         .filter-bar { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
         .filter-bar select, .filter-bar input { border-radius: 8px; border: 1px solid var(--disal-border); padding: 0.5rem 1rem; }
 
-        /* Modals */
         .modal-header { background: var(--disal-primary); color: white; border-radius: 12px 12px 0 0; }
         .modal-content { border: none; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
         .btn-close-white { filter: invert(1); }
 
-        /* Utility */
         .text-disal { color: var(--disal-primary); }
         .bg-disal-light { background: var(--disal-light); }
         .d-none { display: none !important; }
+        .refuerzo-badge { background: #EF4444; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 700; }
+        .desvio-badge { background: #DC2626; color: white; padding: 2px 6px; border-radius: 8px; font-size: 0.75rem; font-weight: 600; }
         
         @media (max-width: 768px) {
             .sidebar { width: 100%; height: auto; position: relative; top: 0; }
@@ -163,7 +162,6 @@
 </head>
 <body>
 
-    <!-- PANTALLA DE LOGIN -->
     <div id="login-screen">
         <div class="login-card">
             <div style="font-size: 3rem; color: var(--disal-primary); margin-bottom: 0.5rem;">⚖️</div>
@@ -177,7 +175,6 @@
                 <div class="mb-3 text-start">
                     <label class="form-label">Contraseña</label>
                     <input type="password" id="login-pass" class="form-control" placeholder="••••••••">
-                    <small class="text-muted">Para admin, se validará automáticamente con el email registrado.</small>
                 </div>
                 <button type="submit" class="btn btn-disal">Ingresar al Sistema</button>
             </form>
@@ -188,9 +185,7 @@
         </div>
     </div>
 
-    <!-- APLICACIÓN PRINCIPAL -->
     <div id="app-container">
-        <!-- Top Bar -->
         <div class="top-bar">
             <div class="brand">
                 <span>⚖️</span> Grupo Disal - Metrología
@@ -202,13 +197,15 @@
             </div>
         </div>
 
-        <!-- Sidebar -->
         <div class="sidebar">
             <div class="nav-link active" onclick="showSection('dashboard')">
                 <i class="fas fa-chart-line"></i> Dashboard
             </div>
             <div class="nav-link" onclick="showSection('tabla')">
                 <i class="fas fa-table"></i> Planificación
+            </div>
+            <div class="nav-link" onclick="showSection('historial')">
+                <i class="fas fa-history"></i> Historial 2025
             </div>
             <div class="nav-link" onclick="openModal('modal-solicitud')">
                 <i class="fas fa-file-signature"></i> Solicitar Verificación
@@ -223,17 +220,12 @@
                 <i class="fas fa-bell"></i> Notificaciones
                 <span class="badge-notif ms-auto" id="notif-count">0</span>
             </div>
-            <div class="nav-link admin-only d-none" onclick="openModal('modal-config')">
-                <i class="fas fa-cog"></i> Configuración EmailJS
-            </div>
             <hr>
-            <div class="small text-muted mt-3">v2.0 | Mayo 2026</div>
+            <div class="small text-muted mt-3">v3.0 | Mayo 2026</div>
         </div>
 
-        <!-- Main Content -->
         <div class="main-content">
             
-            <!-- SECCIÓN DASHBOARD -->
             <div id="section-dashboard">
                 <h3 class="mb-4">📈 Dashboard de Cumplimiento</h3>
                 <div class="row">
@@ -263,25 +255,41 @@
                     </div>
                 </div>
                 <div class="row mt-4">
-                    <div class="col-md-6">
-                        <div class="table-container">
-                            <h5 class="mb-3">📊 Carga Mensual</h5>
-                            <canvas id="chart-mensual" height="250"></canvas>
+                    <div class="col-md-4">
+                        <div class="stat-card info">
+                            <div class="stat-label">Control Reforzado (Trimestral)</div>
+                            <div class="stat-value text-danger" id="stat-reforzado">0</div>
+                            <small class="text-muted">Equipos con historial de desvíos</small>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
+                        <div class="stat-card warning">
+                            <div class="stat-label">Criticidad A (4x/año)</div>
+                            <div class="stat-value" id="stat-crit-a">0</div>
+                            <small class="text-muted">Látex Blanco y Sintéticos</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat-card success">
+                            <div class="stat-label">Verificaciones 2025</div>
+                            <div class="stat-value text-success" id="stat-hist-2025">0</div>
+                            <small class="text-muted">Total realizadas</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-md-12">
                         <div class="table-container">
-                            <h5 class="mb-3">🎯 Estados por Tipo</h5>
-                            <canvas id="chart-tipo" height="250"></canvas>
+                            <h5 class="mb-3">📊 Carga Mensual 2026</h5>
+                            <canvas id="chart-mensual" height="100"></canvas>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- SECCIÓN TABLA -->
             <div id="section-tabla" class="d-none">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h3>📋 Planificación Completa</h3>
+                    <h3>📋 Planificación 2026</h3>
                     <div class="btn-group">
                         <button class="btn btn-outline-secondary btn-sm" onclick="exportCSV()"><i class="fas fa-file-csv"></i> CSV</button>
                         <button class="btn btn-outline-secondary btn-sm" onclick="exportJSON()"><i class="fas fa-file-code"></i> JSON</button>
@@ -309,7 +317,22 @@
                         <option value="Conforme">✅ Conforme</option>
                         <option value="Atención">⚠️ Atención</option>
                         <option value="Desvío">🔴 Desvío</option>
-                        <option value="Especial">🔵 Especial</option>
+                    </select>
+                    <select id="filter-criticidad" onchange="renderTabla()">
+                        <option value="todos">Todas criticidades</option>
+                        <option value="A">🔴 A - Crítico (4x/año)</option>
+                        <option value="B">🟡 B - Medio (2x/año)</option>
+                        <option value="C">🟢 C - Bajo (1x/año)</option>
+                    </select>
+                    <select id="filter-tipo" onchange="renderTabla()">
+                        <option value="todos">Todos los tipos</option>
+                        <option value="Látex Blanco">Látex Blanco</option>
+                        <option value="Látex Color">Látex Color</option>
+                        <option value="TER">TER</option>
+                        <option value="Sintético">Sintético</option>
+                        <option value="Reactor">Reactor</option>
+                        <option value="Resinas">Resinas</option>
+                        <option value="Emulsiones">Emulsiones</option>
                     </select>
                     <input type="text" id="filter-buscar" placeholder="🔍 Buscar equipo o código..." onkeyup="renderTabla()">
                 </div>
@@ -321,14 +344,40 @@
                                 <th>Equipo</th>
                                 <th>Código</th>
                                 <th>Tipo</th>
+                                <th>Criticidad</th>
                                 <th>Mes</th>
                                 <th>Frec.</th>
                                 <th>Estado</th>
+                                <th>Última Verif.</th>
                                 <th>Obs.</th>
                             </tr>
                         </thead>
                         <tbody id="tabla-planificacion">
-                            <!-- Se llena con JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="section-historial" class="d-none">
+                <h3 class="mb-4">📚 Historial de Verificaciones 2025</h3>
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> Registro completo de verificaciones realizadas en 2025 con desvíos y ajustes documentados
+                </div>
+                <div class="table-container">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Equipo</th>
+                                <th>Tipo</th>
+                                <th>Verificación 1</th>
+                                <th>Verificación 2</th>
+                                <th>Verificación 3</th>
+                                <th>Verificación 4</th>
+                                <th>Desvíos</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-historial">
                         </tbody>
                     </table>
                 </div>
@@ -337,9 +386,6 @@
         </div>
     </div>
 
-    <!-- MODALES -->
-
-    <!-- Modal: Solicitar Verificación -->
     <div class="modal fade" id="modal-solicitud" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -350,9 +396,7 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label">Tanque / Equipo</label>
-                        <select class="form-select" id="sol-equipo">
-                            <option value="">Seleccionar...</option>
-                        </select>
+                        <select class="form-select" id="sol-equipo"></select>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Tipo</label>
@@ -366,7 +410,7 @@
                         <select class="form-select" id="sol-urgencia">
                             <option value="Normal">🟢 Normal</option>
                             <option value="Alta">🟡 Alta</option>
-                            <option value="Crítica"> Crítica</option>
+                            <option value="Crítica">🔴 Crítica</option>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -386,31 +430,38 @@
         </div>
     </div>
 
-    <!-- Modal: Registrar Verificación (Admin) -->
     <div class="modal fade" id="modal-registro" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">🔧 Registrar Verificación</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Equipo</label>
-                        <select class="form-select" id="reg-equipo"></select>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Equipo</label>
+                            <select class="form-select" id="reg-equipo"></select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Fecha</label>
+                            <input type="date" class="form-control" id="reg-fecha">
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Fecha</label>
-                        <input type="date" class="form-control" id="reg-fecha">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Resultado</label>
-                        <select class="form-select" id="reg-resultado">
-                            <option value="Conforme">✅ Conforme</option>
-                            <option value="Ajuste"> Requiere Ajuste</option>
-                            <option value="Desvío">️ Desvío</option>
-                            <option value="Fuera">🔴 Fuera de tolerancia</option>
-                        </select>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Resultado</label>
+                            <select class="form-select" id="reg-resultado" onchange="checkRequiereAjuste()">
+                                <option value="Conforme">✅ Conforme</option>
+                                <option value="Ajuste">🔧 Requiere Ajuste</option>
+                                <option value="Desvío">⚠️ Desvío</option>
+                                <option value="Fuera">🔴 Fuera de tolerancia</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">% Desvío (si aplica)</label>
+                            <input type="text" class="form-control" id="reg-desvio-pct" placeholder="Ej: +2%, -3.5%">
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Observaciones</label>
@@ -429,7 +480,6 @@
         </div>
     </div>
 
-    <!-- Modal: Imprimir PDF -->
     <div class="modal fade" id="modal-print" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -451,23 +501,9 @@
                             </select>
                         </div>
                     </div>
-                    <div class="row mb-3">
-                        <label class="col-sm-4 col-form-label">Filtrar por tipo:</label>
-                        <div class="col-sm-8">
-                            <select class="form-select" id="tipo-print">
-                                <option value="todos">Todos los tipos</option>
-                                <option value="Látex">Látex</option><option value="Blanco">Blanco</option>
-                                <option value="TER">TER</option><option value="Sintético">Sintético</option>
-                                <option value="Reactor">Reactor</option><option value="Otros">Otros</option>
-                            </select>
-                        </div>
-                    </div>
                     <div class="mb-3">
                         <label class="form-label">Notas adicionales (opcional):</label>
-                        <textarea class="form-control" id="notas-print" rows="3" placeholder="Agregue observaciones generales..."></textarea>
-                    </div>
-                    <div class="alert alert-info bg-disal-light border-0 text-disal">
-                        <small>✓ El PDF incluirá: Header corporativo, tabla completa, resumen estadístico y footer con información de contacto.</small>
+                        <textarea class="form-control" id="notas-print" rows="3"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -478,7 +514,6 @@
         </div>
     </div>
 
-    <!-- Modal: Notificaciones -->
     <div class="modal fade" id="modal-notif" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -487,7 +522,7 @@
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <h6 class="mb-3">️ Configuración EmailJS</h6>
+                    <h6 class="mb-3">⚙️ Configuración EmailJS</h6>
                     <div class="row mb-3">
                         <div class="col-md-4"><input type="text" class="form-control" id="cfg-service" placeholder="Service ID"></div>
                         <div class="col-md-4"><input type="text" class="form-control" id="cfg-template" placeholder="Template ID"></div>
@@ -497,7 +532,6 @@
                         <button class="btn btn-outline-primary btn-sm" onclick="guardarConfigEmailJS()">💾 Guardar</button>
                         <button class="btn btn-outline-secondary btn-sm" onclick="probarEmailJS()">🧪 Probar Conexión</button>
                     </div>
-                    
                     <hr>
                     <h6 class="mb-3">📅 Enviar Planificación Mensual</h6>
                     <div class="row mb-3">
@@ -530,22 +564,6 @@
         </div>
     </div>
 
-    <!-- Modal: Configuración (Admin) -->
-    <div class="modal fade" id="modal-config" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">️ Configuración Avanzada</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Gestión de parámetros del sistema. Actualmente integrado en el panel de notificaciones para simplificar el flujo.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
@@ -553,23 +571,43 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
-        // ==========================================
-        // ESTADO GLOBAL & DATOS DE EJEMPLO
-        // ==========================================
         const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
         
         let state = {
             usuario: null,
             esAdmin: false,
             equipos: [
-                { id: 1, nombre: 'Tanque Látex A1', codigo: 'TL-A1', tipo: 'Látex', mes: 'Enero', frec: 'Mensual', estado: 'Conforme', obs: '' },
-                { id: 2, nombre: 'Tanque Látex A2', codigo: 'TL-A2', tipo: 'Látex', mes: 'Enero', frec: 'Mensual', estado: 'Atención', obs: 'Revisar válvula' },
-                { id: 3, nombre: 'Tanque Blanco B1', codigo: 'TB-B1', tipo: 'Blanco', mes: 'Febrero', frec: 'Trimestral', estado: 'Conforme', obs: '' },
-                { id: 4, nombre: 'Reactor R-05', codigo: 'RC-R5', tipo: 'Reactor', mes: 'Marzo', frec: 'Semestral', estado: 'Desvío', obs: 'Fuera de tolerancia >2%' },
-                { id: 5, nombre: 'Tanque Sintético S1', codigo: 'TS-S1', tipo: 'Sintético', mes: 'Abril', frec: 'Mensual', estado: 'Especial', obs: 'Calibración externa' },
-                { id: 6, nombre: 'Tanque TER T1', codigo: 'TT-T1', tipo: 'TER', mes: 'Mayo', frec: 'Mensual', estado: 'Conforme', obs: '' },
-                { id: 7, nombre: 'Tanque Látex A3', codigo: 'TL-A3', tipo: 'Látex', mes: 'Junio', frec: 'Mensual', estado: 'Atención', obs: 'Sensor inestable' },
-                { id: 8, nombre: 'Tanque Blanco B2', codigo: 'TB-B2', tipo: 'Blanco', mes: 'Julio', frec: 'Trimestral', estado: 'Conforme', obs: '' }
+                { id: 1, nombre: 'TK3 LatBco', codigo: '00582', tipo: 'Látex Blanco', criticidad: 'A', mes: 'Enero', frec: 'Trimestral', estado: 'Conforme', ultimaVerif: '27/9/2025', obs: '', desvios: [] },
+                { id: 2, nombre: 'TK1 LatBco', codigo: '00592', tipo: 'Látex Blanco', criticidad: 'A', mes: 'Febrero', frec: 'Trimestral', estado: 'Desvío', ultimaVerif: '21/11/2025', obs: 'Múltiples verificaciones 2025', desvios: ['23/7/2025', '29/10/2025', '13/11/2025'] },
+                { id: 3, nombre: 'TK2 LatBco', codigo: '00593', tipo: 'Látex Blanco', criticidad: 'A', mes: 'Marzo', frec: 'Cuatrimestral', estado: 'Conforme', ultimaVerif: '29/10/2025', obs: '', desvios: [] },
+                { id: 4, nombre: 'TK5 LatBco', codigo: '00626', tipo: 'Látex Blanco', criticidad: 'A', mes: 'Marzo', frec: 'Cuatrimestral', estado: 'Conforme', ultimaVerif: '23/5/2025', obs: '', desvios: [] },
+                { id: 5, nombre: 'TK6 LatBco', codigo: '00627', tipo: 'Látex Blanco', criticidad: 'A', mes: 'Enero', frec: 'Trimestral', estado: 'Conforme', ultimaVerif: '3/10/2025', obs: '', desvios: [] },
+                { id: 6, nombre: 'TK4 LatBco', codigo: '00700', tipo: 'Látex Blanco', criticidad: 'A', mes: 'Abril', frec: 'Trimestral', estado: 'Desvío', ultimaVerif: '5/11/2025', obs: 'Desvíos: 3.5%, +2%', desvios: ['23/7/2025 (3.5%)', '5/2/2025', '25/9/2025 (+2%)'] },
+                { id: 7, nombre: 'TK N3 Látex Color', codigo: '00644', tipo: 'Látex Color', criticidad: 'B', mes: 'Marzo', frec: 'Semestral', estado: 'Conforme', ultimaVerif: '21/8/2025', obs: '', desvios: [] },
+                { id: 8, nombre: 'TK3-TER', codigo: '00663', tipo: 'TER', criticidad: 'B', mes: 'Enero', frec: 'Semestral', estado: 'Conforme', ultimaVerif: '22/9/2025', obs: '', desvios: [] },
+                { id: 9, nombre: 'TK4-TER', codigo: '00664', tipo: 'TER', criticidad: 'B', mes: 'Enero', frec: 'Semestral', estado: 'Conforme', ultimaVerif: '1/2/2025', obs: '', desvios: [] },
+                { id: 10, nombre: 'TK5-TER', codigo: '00665', tipo: 'TER', criticidad: 'B', mes: 'Abril', frec: 'Trimestral', estado: 'Desvío', ultimaVerif: '30/11/2025', obs: 'Desvío -3.5%', desvios: ['10/7/2025 (-3.5%)', '25/3/2025', '23/7/2025', '16/8/2025', '29/8/2025', '23/9/2025'] },
+                { id: 11, nombre: 'TK6-TER', codigo: '00666', tipo: 'TER', criticidad: 'B', mes: 'Mayo', frec: 'Trimestral', estado: 'Desvío', ultimaVerif: '21/11/2025', obs: 'Ajuste 2%', desvios: ['23/9/2025 (ajuste 2%)'] },
+                { id: 12, nombre: 'TK N6 Sint', codigo: '00640', tipo: 'Sintético', criticidad: 'A', mes: 'Junio', frec: 'Cuatrimestral', estado: 'Conforme', ultimaVerif: '18/11/2025', obs: '', desvios: [] },
+                { id: 13, nombre: 'TK N3 Sint', codigo: '00643', tipo: 'Sintético', criticidad: 'A', mes: 'Marzo', frec: 'Cuatrimestral', estado: 'Conforme', ultimaVerif: '22/8/2025', obs: '', desvios: [] },
+                { id: 14, nombre: 'TKN1 Sint', codigo: '00649', tipo: 'Sintético', criticidad: 'A', mes: 'Septiembre', frec: 'Cuatrimestral', estado: 'Conforme', ultimaVerif: '-', obs: 'Sin verificaciones 2025', desvios: [] },
+                { id: 15, nombre: 'TKN2 Sint', codigo: '00650', tipo: 'Sintético', criticidad: 'A', mes: 'Abril', frec: 'Cuatrimestral', estado: 'Conforme', ultimaVerif: '22/8/2025', obs: '', desvios: [] },
+                { id: 16, nombre: 'TKN4 Sint', codigo: '00651', tipo: 'Sintético', criticidad: 'A', mes: 'Julio', frec: 'Cuatrimestral', estado: 'Conforme', ultimaVerif: '-', obs: 'Sin verificaciones 2025', desvios: [] },
+                { id: 17, nombre: 'TKN5 Sint', codigo: '00652', tipo: 'Sintético', criticidad: 'A', mes: 'Marzo', frec: 'Cuatrimestral', estado: 'Conforme', ultimaVerif: '28/10/2025', obs: '', desvios: [] },
+                { id: 18, nombre: 'TKN7 Sint', codigo: '00653', tipo: 'Sintético', criticidad: 'A', mes: 'Mayo', frec: 'Cuatrimestral', estado: 'Conforme', ultimaVerif: '30/9/2025', obs: '', desvios: [] },
+                { id: 19, nombre: 'TKN8 Sint', codigo: '00654', tipo: 'Sintético', criticidad: 'A', mes: 'Junio', frec: 'Cuatrimestral', estado: 'Conforme', ultimaVerif: '-', obs: 'Sin verificaciones 2025', desvios: [] },
+                { id: 20, nombre: 'TKN9 Sint', codigo: '00655', tipo: 'Sintético', criticidad: 'A', mes: 'Junio', frec: 'Cuatrimestral', estado: 'Conforme', ultimaVerif: '-', obs: 'Sin verificaciones 2025', desvios: [] },
+                { id: 21, nombre: 'TKN10 Sint', codigo: '00657', tipo: 'Sintético', criticidad: 'A', mes: 'Octubre', frec: 'Cuatrimestral', estado: 'Conforme', ultimaVerif: '-', obs: 'Sin verificaciones 2025', desvios: [] },
+                { id: 22, nombre: 'TKN11 Sint', codigo: '00658', tipo: 'Sintético', criticidad: 'A', mes: 'Octubre', frec: 'Cuatrimestral', estado: 'Conforme', ultimaVerif: '-', obs: 'Sin verificaciones 2025', desvios: [] },
+                { id: 23, nombre: 'TKN12 Sint', codigo: '00659', tipo: 'Sintético', criticidad: 'A', mes: 'Mayo', frec: 'Cuatrimestral', estado: 'Conforme', ultimaVerif: '24/9/2025', obs: '', desvios: [] },
+                { id: 24, nombre: 'TKN13 Sint', codigo: '00660', tipo: 'Sintético', criticidad: 'A', mes: 'Noviembre', frec: 'Cuatrimestral', estado: 'Conforme', ultimaVerif: '28/10/2025', obs: '', desvios: [] },
+                { id: 25, nombre: 'Reactor 2', codigo: '00141', tipo: 'Reactor', criticidad: 'C', mes: 'Mayo', frec: 'Anual', estado: 'Conforme', ultimaVerif: '29/7/2025', obs: '', desvios: [] },
+                { id: 26, nombre: 'Coloide', codigo: '00143', tipo: 'Emulsiones', criticidad: 'C', mes: 'Diciembre', frec: 'Anual', estado: 'Conforme', ultimaVerif: '-', obs: 'Sin verificaciones 2025', desvios: [] },
+                { id: 27, nombre: 'TK2-201', codigo: '00145', tipo: 'Emulsiones', criticidad: 'C', mes: 'Junio', frec: 'Anual', estado: 'Conforme', ultimaVerif: '29/7/2025', obs: '', desvios: [] },
+                { id: 28, nombre: 'TK2-101', codigo: '00146', tipo: 'Emulsiones', criticidad: 'C', mes: 'Mayo', frec: 'Anual', estado: 'Conforme', ultimaVerif: '30/7/2025', obs: '', desvios: [] },
+                { id: 29, nombre: 'Reactor 1', codigo: '00142', tipo: 'Reactor', criticidad: 'C', mes: 'Mayo', frec: 'Anual', estado: 'Conforme', ultimaVerif: '30/7/2025', obs: '', desvios: [] },
+                { id: 30, nombre: 'Reactor 2 Resinas', codigo: '00602', tipo: 'Resinas', criticidad: 'B', mes: 'Agosto', frec: 'Semestral', estado: 'Conforme', ultimaVerif: '-', obs: 'Sin verificaciones 2025', desvios: [] },
+                { id: 31, nombre: 'Reactor 1 Resinas', codigo: '00601', tipo: 'Resinas', criticidad: 'B', mes: 'Abril', frec: 'Semestral', estado: 'Conforme', ultimaVerif: '22/7/2025', obs: '', desvios: [] }
             ],
             solicitudes: [],
             configEmailJS: {
@@ -579,14 +617,12 @@
             }
         };
 
-        // ==========================================
-        // INICIALIZACIÓN & AUTENTICACIÓN
-        // ==========================================
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('login-form').addEventListener('submit', handleLogin);
             cargarConfigEmailJS();
             renderTabla();
             renderDashboard();
+            renderHistorial();
             cargarSelectEquipos();
         });
 
@@ -602,7 +638,6 @@
             state.usuario = email;
             state.esAdmin = email.toLowerCase() === 'm3tr0l0giadisal@gmail.com';
             
-            // Simulación de validación de contraseña para admin
             if (state.esAdmin && pass !== 'disal2026') {
                 return Swal.fire('Acceso Denegado', 'Contraseña de administrador incorrecta.', 'error');
             }
@@ -623,15 +658,13 @@
             location.reload();
         }
 
-        // ==========================================
-        // NAVEGACIÓN & UI
-        // ==========================================
         function showSection(section) {
             document.querySelectorAll('.main-content > div').forEach(d => d.classList.add('d-none'));
             document.getElementById(`section-${section}`).classList.remove('d-none');
             document.querySelectorAll('.sidebar .nav-link').forEach(l => l.classList.remove('active'));
             event.currentTarget.classList.add('active');
             if (section === 'dashboard') renderDashboard();
+            if (section === 'historial') renderHistorial();
         }
 
         function openModal(id) {
@@ -644,18 +677,25 @@
                 const sel = document.getElementById(selId);
                 if(!sel) return;
                 sel.innerHTML = '<option value="">Seleccionar...</option>';
+                const equiposUnicos = [];
+                const vistos = new Set();
                 state.equipos.forEach(eq => {
-                    sel.innerHTML += `<option value="${eq.codigo}">${eq.nombre} (${eq.codigo})</option>`;
+                    if (!vistos.has(eq.codigo)) {
+                        vistos.add(eq.codigo);
+                        equiposUnicos.push(eq);
+                    }
+                });
+                equiposUnicos.forEach(eq => {
+                    sel.innerHTML += `<option value="${eq.codigo}" data-criticidad="${eq.criticidad}" data-frec="${eq.frec}">${eq.nombre} (${eq.codigo}) - Criticidad ${eq.criticidad}</option>`;
                 });
             });
         }
 
-        // ==========================================
-        // RENDERIZADO TABLA & DASHBOARD
-        // ==========================================
         function renderTabla() {
             const mesFiltro = document.getElementById('filter-mes').value;
             const estadoFiltro = document.getElementById('filter-estado').value;
+            const criticidadFiltro = document.getElementById('filter-criticidad').value;
+            const tipoFiltro = document.getElementById('filter-tipo').value;
             const buscar = document.getElementById('filter-buscar').value.toLowerCase();
             
             const tbody = document.getElementById('tabla-planificacion');
@@ -664,32 +704,67 @@
             const filtrados = state.equipos.filter(eq => {
                 const matchMes = mesFiltro === 'todos' || eq.mes === mesFiltro;
                 const matchEstado = estadoFiltro === 'todos' || eq.estado === estadoFiltro;
+                const matchCriticidad = criticidadFiltro === 'todos' || eq.criticidad === criticidadFiltro;
+                const matchTipo = tipoFiltro === 'todos' || eq.tipo === tipoFiltro;
                 const matchBuscar = eq.nombre.toLowerCase().includes(buscar) || eq.codigo.toLowerCase().includes(buscar);
-                return matchMes && matchEstado && matchBuscar;
+                return matchMes && matchEstado && matchCriticidad && matchTipo && matchBuscar;
             });
 
             filtrados.forEach(eq => {
                 let badgeClass = 'status-conforme';
                 if (eq.estado === 'Atención') badgeClass = 'status-atencion';
                 if (eq.estado === 'Desvío') badgeClass = 'status-desvio';
-                if (eq.estado === 'Especial') badgeClass = 'status-especial';
+                
+                let critClass = 'criticidad-C';
+                if (eq.criticidad === 'A') critClass = 'criticidad-A';
+                if (eq.criticidad === 'B') critClass = 'criticidad-B';
+
+                const refuerzoBadge = (eq.frec === 'Trimestral' && eq.desvios.length > 0) ? '<span class="refuerzo-badge">REFUERZO</span>' : '';
+                const desvioBadge = eq.desvios.length > 0 ? `<span class="desvio-badge">${eq.desvios.length} desvío(s)</span>` : '';
 
                 tbody.innerHTML += `
                     <tr>
-                        <td><strong>${eq.nombre}</strong></td>
+                        <td><strong>${eq.nombre}</strong> ${refuerzoBadge}</td>
                         <td>${eq.codigo}</td>
                         <td><span class="badge bg-secondary">${eq.tipo}</span></td>
+                        <td><span class="status-badge ${critClass}">Nivel ${eq.criticidad}</span></td>
                         <td>${eq.mes}</td>
                         <td>${eq.frec}</td>
-                        <td><span class="status-badge ${badgeClass}">${eq.estado}</span></td>
+                        <td><span class="status-badge ${badgeClass}">${eq.estado}</span> ${desvioBadge}</td>
+                        <td>${eq.ultimaVerif}</td>
                         <td>${eq.obs || '-'}</td>
                     </tr>
                 `;
             });
             
             if (filtrados.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-4">No se encontraron registros</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="9" class="text-center text-muted py-4">No se encontraron registros</td></tr>';
             }
+        }
+
+        function renderHistorial() {
+            const tbody = document.getElementById('tabla-historial');
+            tbody.innerHTML = '';
+            
+            const equiposConHistorial = state.equipos.filter(eq => eq.desvios.length > 0 || eq.ultimaVerif !== '-');
+            
+            equiposConHistorial.forEach(eq => {
+                const desviosText = eq.desvios.length > 0 ? eq.desvios.join(', ') : 'Sin desvíos';
+                const tieneDesvios = eq.desvios.some(d => d.includes('%') || d.includes('ajuste'));
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${eq.codigo}</strong></td>
+                        <td>${eq.nombre}</td>
+                        <td>${eq.tipo}</td>
+                        <td>${eq.ultimaVerif}</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>${tieneDesvios ? '<span class="text-danger"><i class="fas fa-exclamation-triangle"></i> ' + desviosText : '<span class="text-success">Sin desvíos</span>'}</td>
+                    </tr>
+                `;
+            });
         }
 
         function renderDashboard() {
@@ -697,62 +772,52 @@
             const conformes = state.equipos.filter(e => e.estado === 'Conforme').length;
             const atencion = state.equipos.filter(e => e.estado === 'Atención').length;
             const desvios = state.equipos.filter(e => e.estado === 'Desvío').length;
+            const reforzado = state.equipos.filter(e => e.frec === 'Trimestral').length;
+            const critA = state.equipos.filter(e => e.criticidad === 'A').length;
+            const totalVerif2025 = state.equipos.reduce((acc, eq) => acc + (eq.desvios.length > 0 ? eq.desvios.length : 1), 0);
 
             document.getElementById('stat-total').textContent = total;
             document.getElementById('stat-conforme').textContent = conformes;
             document.getElementById('stat-atencion').textContent = atencion;
             document.getElementById('stat-desvio').textContent = desvios;
+            document.getElementById('stat-reforzado').textContent = reforzado;
+            document.getElementById('stat-crit-a').textContent = critA;
+            document.getElementById('stat-hist-2025').textContent = totalVerif2025;
 
-            // Chart Mensual (Simplificado)
             const ctxM = document.getElementById('chart-mensual');
             if(ctxM) {
+                const dataMensual = MESES.map(m => state.equipos.filter(e => e.mes === m).length);
                 new Chart(ctxM, {
                     type: 'bar',
                     data: {
                         labels: MESES,
                         datasets: [{
                             label: 'Equipos a verificar',
-                            data: MESES.map(m => state.equipos.filter(e => e.mes === m).length),
-                            backgroundColor: '#2563EB',
+                            data: dataMensual,
+                            backgroundColor: dataMensual.map(v => v > 4 ? '#EF4444' : v > 2 ? '#F59E0B' : '#10B981'),
                             borderRadius: 6
                         }]
                     },
-                    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
-                });
-            }
-
-            // Chart Tipo
-            const ctxT = document.getElementById('chart-tipo');
-            if(ctxT) {
-                const tipos = [...new Set(state.equipos.map(e => e.tipo))];
-                new Chart(ctxT, {
-                    type: 'doughnut',
-                    data: {
-                        labels: tipos,
-                        datasets: [{
-                            data: tipos.map(t => state.equipos.filter(e => e.tipo === t).length),
-                            backgroundColor: ['#1E3A8A', '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#6B7280']
-                        }]
-                    },
-                    options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+                    options: { 
+                        responsive: true, 
+                        plugins: { legend: { display: false } }, 
+                        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } 
+                    }
                 });
             }
         }
 
-        // ==========================================
-        // EXPORTAR DATOS
-        // ==========================================
         function exportCSV() {
-            let csv = 'Equipo,Codigo,Tipo,Mes,Frecuencia,Estado,Observaciones\n';
+            let csv = 'Equipo,Codigo,Tipo,Criticidad,Mes,Frecuencia,Estado,UltimaVerificacion,Observaciones\n';
             state.equipos.forEach(e => {
-                csv += `"${e.nombre}","${e.codigo}","${e.tipo}","${e.mes}","${e.frec}","${e.estado}","${e.obs}"\n`;
+                csv += `"${e.nombre}","${e.codigo}","${e.tipo}","${e.criticidad}","${e.mes}","${e.frec}","${e.estado}","${e.ultimaVerif}","${e.obs}"\n`;
             });
-            downloadFile(csv, 'planificacion_disal.csv', 'text/csv');
+            downloadFile(csv, 'planificacion_disal_2026.csv', 'text/csv');
         }
 
         function exportJSON() {
             const json = JSON.stringify(state.equipos, null, 2);
-            downloadFile(json, 'planificacion_disal.json', 'application/json');
+            downloadFile(json, 'planificacion_disal_2026.json', 'application/json');
         }
 
         function downloadFile(content, fileName, contentType) {
@@ -763,9 +828,6 @@
             a.click();
         }
 
-        // ==========================================
-        // SOLICITUDES & REGISTRO
-        // ==========================================
         function enviarSolicitud() {
             const equipo = document.getElementById('sol-equipo').value;
             const tipo = document.getElementById('sol-tipo').value;
@@ -782,89 +844,111 @@
             document.getElementById('sol-motivo').value = '';
         }
 
+        function checkRequiereAjuste() {
+            const resultado = document.getElementById('reg-resultado').value;
+            if (resultado === 'Ajuste' || resultado === 'Desvío' || resultado === 'Fuera') {
+                document.getElementById('reg-desvio-pct').parentElement.style.display = 'block';
+            } else {
+                document.getElementById('reg-desvio-pct').parentElement.style.display = 'none';
+            }
+        }
+
         function guardarVerificacion() {
             if (!state.esAdmin) return Swal.fire('Acceso Restringido', 'Solo administradores pueden registrar verificaciones.', 'error');
             
             const codigo = document.getElementById('reg-equipo').value;
             const fecha = document.getElementById('reg-fecha').value;
             const resultado = document.getElementById('reg-resultado').value;
+            const desvioPct = document.getElementById('reg-desvio-pct').value;
             const obs = document.getElementById('reg-obs').value;
             const emailNotif = document.getElementById('reg-email-notif').value;
 
             if (!codigo || !fecha) return Swal.fire('Datos faltantes', 'Seleccione equipo y fecha.', 'warning');
 
-            const eqIndex = state.equipos.findIndex(e => e.codigo === codigo);
-            if (eqIndex !== -1) {
-                state.equipos[eqIndex].estado = resultado === 'Fuera' ? 'Desvío' : resultado;
-                state.equipos[eqIndex].obs = obs;
-                renderTabla();
-                renderDashboard();
-            }
+            state.equipos.forEach(eq => {
+                if (eq.codigo === codigo) {
+                    eq.estado = resultado === 'Fuera' ? 'Desvío' : resultado;
+                    eq.ultimaVerif = fecha;
+                    if (desvioPct) {
+                        eq.desvios.push(`${fecha} (${desvioPct})`);
+                        eq.obs = `Desvío registrado: ${desvioPct}. ${obs}`;
+                        eq.frec = 'Trimestral';
+                    } else if (obs) {
+                        eq.obs = obs;
+                    }
+                    
+                    if (resultado === 'Ajuste' || resultado === 'Desvío' || resultado === 'Fuera') {
+                        eq.frec = 'Trimestral';
+                    }
+                }
+            });
+            
+            renderTabla();
+            renderDashboard();
 
             if (emailNotif && state.configEmailJS.publicKey) {
                 emailjs.init(state.configEmailJS.publicKey);
                 emailjs.send(state.configEmailJS.serviceId, state.configEmailJS.templateId, {
                     to_email: emailNotif,
                     subject: `Resultado Verificación ${codigo}`,
-                    message: `El equipo ${codigo} ha sido verificado con resultado: ${resultado}. Obs: ${obs}`
+                    message: `El equipo ${codigo} ha sido verificado con resultado: ${resultado}. ${desvioPct ? 'Desvío: ' + desvioPct : ''} Obs: ${obs}`
                 }).catch(err => console.log(err));
             }
 
-            Swal.fire(' Guardado', 'Registro actualizado correctamente.', 'success');
+            Swal.fire('✅ Guardado', 'Registro actualizado correctamente.', 'success');
             bootstrap.Modal.getInstance(document.getElementById('modal-registro')).hide();
         }
 
-        // ==========================================
-        // GENERACIÓN ROBUSTA DE PDF (html2pdf.js)
-        // ==========================================
         function generarPDF() {
             const mes = document.getElementById('mes-print').value;
-            const tipoFiltro = document.getElementById('tipo-print').value;
             const notas = document.getElementById('notas-print').value || '';
             
             const btn = event.target;
             btn.disabled = true;
             btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Generando...';
 
-            // Filtrar datos
             let datos = state.equipos.filter(e => e.mes === mes);
-            if (tipoFiltro !== 'todos') datos = datos.filter(e => e.tipo === tipoFiltro);
 
-            // Crear contenedor temporal
             const div = document.createElement('div');
             div.style.padding = '20px';
-            div.style.width = '1120px'; // A4 landscape approx
+            div.style.width = '1120px';
             div.style.backgroundColor = '#ffffff';
             div.style.fontFamily = 'Segoe UI, sans-serif';
             div.style.color = '#1F2937';
 
-            // Header Corporativo
             div.innerHTML += `
                 <div style="text-align:center; border-bottom:3px solid #1E3A8A; padding-bottom:15px; margin-bottom:20px;">
                     <h2 style="margin:0; color:#1E3A8A; font-size:24px;">GRUPO DISAL</h2>
                     <p style="margin:5px 0 0; color:#6B7280; font-size:12px;">VILLA MERCEDES | SISTEMA DE GESTIÓN DE METROLOGÍA</p>
-                    <h3 style="margin:15px 0 5px; color:#334155; font-size:18px;">PLANIFICACIÓN DE VERIFICACIONES</h3>
+                    <h3 style="margin:15px 0 5px; color:#334155; font-size:18px;">PLANIFICACIÓN DE VERIFICACIONES - TANQUES</h3>
                     <p style="margin:0; color:#4B5563; font-size:14px;">Período: <strong>${mes} 2026</strong> | Generado: ${new Date().toLocaleDateString('es-AR')}</p>
                 </div>
             `;
 
-            // Info Filtros
+            const totalEq = datos.length;
+            const critA = datos.filter(e => e.criticidad === 'A').length;
+            const critB = datos.filter(e => e.criticidad === 'B').length;
+            const critC = datos.filter(e => e.criticidad === 'C').length;
+            
             div.innerHTML += `
-                <div style="background:#EFF6FF; padding:10px; border-radius:6px; margin-bottom:15px; font-size:12px; display:flex; justify-content:space-between;">
-                    <span><strong>Tipo filtrado:</strong> ${tipoFiltro}</span>
-                    <span><strong>Total equipos:</strong> ${datos.length}</span>
+                <div style="background:#EFF6FF; padding:10px; border-radius:6px; margin-bottom:15px; font-size:12px; display:flex; justify-content:space-around;">
+                    <span><strong>Total equipos:</strong> ${totalEq}</span>
+                    <span><strong>Crit A:</strong> ${critA}</span>
+                    <span><strong>Crit B:</strong> ${critB}</span>
+                    <span><strong>Crit C:</strong> ${critC}</span>
                 </div>
             `;
 
-            // Tabla
             let tableHTML = `<table style="width:100%; border-collapse:collapse; font-size:11px; margin-bottom:20px;">
                 <thead>
                     <tr style="background:#1E3A8A; color:white;">
                         <th style="padding:8px; border:1px solid #E2E8F0; text-align:left;">Equipo</th>
                         <th style="padding:8px; border:1px solid #E2E8F0; text-align:left;">Código</th>
                         <th style="padding:8px; border:1px solid #E2E8F0; text-align:left;">Tipo</th>
+                        <th style="padding:8px; border:1px solid #E2E8F0; text-align:center;">Crit.</th>
                         <th style="padding:8px; border:1px solid #E2E8F0; text-align:center;">Frec.</th>
                         <th style="padding:8px; border:1px solid #E2E8F0; text-align:center;">Estado</th>
+                        <th style="padding:8px; border:1px solid #E2E8F0; text-align:left;">Última Verif.</th>
                         <th style="padding:8px; border:1px solid #E2E8F0; text-align:left;">Obs.</th>
                     </tr>
                 </thead><tbody>`;
@@ -874,37 +958,24 @@
                 let color = '#10B981', label = 'Conforme';
                 if(e.estado==='Atención'){ color='#F59E0B'; label='Atención'; }
                 if(e.estado==='Desvío'){ color='#EF4444'; label='Desvío'; }
-                if(e.estado==='Especial'){ color='#2563EB'; label='Especial'; }
+                
+                let critColor = '#10B981';
+                if(e.criticidad==='A') critColor = '#EF4444';
+                if(e.criticidad==='B') critColor = '#F59E0B';
 
                 tableHTML += `<tr style="background:${bg};">
                     <td style="padding:8px; border:1px solid #E2E8F0;">${e.nombre}</td>
                     <td style="padding:8px; border:1px solid #E2E8F0;">${e.codigo}</td>
                     <td style="padding:8px; border:1px solid #E2E8F0;">${e.tipo}</td>
+                    <td style="padding:8px; border:1px solid #E2E8F0; text-align:center; color:${critColor}; font-weight:bold;">${e.criticidad}</td>
                     <td style="padding:8px; border:1px solid #E2E8F0; text-align:center;">${e.frec}</td>
                     <td style="padding:8px; border:1px solid #E2E8F0; text-align:center; color:${color}; font-weight:600;">${label}</td>
+                    <td style="padding:8px; border:1px solid #E2E8F0;">${e.ultimaVerif}</td>
                     <td style="padding:8px; border:1px solid #E2E8F0; font-size:10px;">${e.obs||'-'}</td>
                 </tr>`;
             });
             tableHTML += '</tbody></table>';
             div.innerHTML += tableHTML;
-
-            // Resumen
-            const conf = datos.filter(e=>e.estado==='Conforme').length;
-            const aten = datos.filter(e=>e.estado==='Atención').length;
-            const desv = datos.filter(e=>e.estado==='Desvío').length;
-            div.innerHTML += `
-                <div style="display:flex; gap:10px; margin-bottom:20px;">
-                    <div style="flex:1; background:#D1FAE5; padding:10px; border-radius:6px; text-align:center; color:#065F46;">
-                        <div style="font-size:20px; font-weight:bold;">${conf}</div><div style="font-size:11px;">Conformes</div>
-                    </div>
-                    <div style="flex:1; background:#FEF3C7; padding:10px; border-radius:6px; text-align:center; color:#92400E;">
-                        <div style="font-size:20px; font-weight:bold;">${aten}</div><div style="font-size:11px;">Atención</div>
-                    </div>
-                    <div style="flex:1; background:#FEE2E2; padding:10px; border-radius:6px; text-align:center; color:#991B1B;">
-                        <div style="font-size:20px; font-weight:bold;">${desv}</div><div style="font-size:11px;">Desvíos</div>
-                    </div>
-                </div>
-            `;
 
             if(notas) {
                 div.innerHTML += `<div style="background:#FFF7ED; border-left:4px solid #F59E0B; padding:10px; margin-bottom:20px; font-size:12px;"><strong>Notas:</strong> ${notas}</div>`;
@@ -914,7 +985,6 @@
                 Documento generado automáticamente por Sistema Metrología Disal | m3tr0l0giadisal@gmail.com
             </div>`;
 
-            // Agregar al DOM invisible
             div.style.position = 'absolute';
             div.style.left = '-9999px';
             document.body.appendChild(div);
@@ -942,9 +1012,6 @@
             });
         }
 
-        // ==========================================
-        // NOTIFICACIONES & EMAILJS
-        // ==========================================
         function cargarConfigEmailJS() {
             document.getElementById('cfg-service').value = state.configEmailJS.serviceId;
             document.getElementById('cfg-template').value = state.configEmailJS.templateId;
@@ -979,10 +1046,9 @@
             const msgAdd = document.getElementById('notif-msg').value;
             const btn = document.getElementById('btn-enviar-notif');
 
-            // Validación estricta de emails
             const emails = emailsRaw.split(',').map(e => e.trim()).filter(e => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e));
             if (emails.length === 0) return Swal.fire('Error', 'Ingresa al menos un email válido separado por comas.', 'error');
-            if (!state.configEmailJS.publicKey) return Swal.fire('Configuración', 'Configura EmailJS primero en la pestaña superior.', 'warning');
+            if (!state.configEmailJS.publicKey) return Swal.fire('Configuración', 'Configura EmailJS primero.', 'warning');
 
             btn.disabled = true;
             btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Enviando...';
@@ -990,11 +1056,11 @@
             emailjs.init(state.configEmailJS.publicKey);
             const datosMes = state.equipos.filter(e => e.mes === mes);
             
-            // Construir tabla HTML para el email
             let tablaEmail = `<table style="border-collapse:collapse; width:100%; font-size:12px; margin-top:10px;">
-                <tr style="background:#1E3A8A; color:white;"><th style="padding:6px; border:1px solid #ccc;">Equipo</th><th style="padding:6px; border:1px solid #ccc;">Estado</th></tr>`;
+                <tr style="background:#1E3A8A; color:white;"><th style="padding:6px; border:1px solid #ccc;">Equipo</th><th style="padding:6px; border:1px solid #ccc;">Código</th><th style="padding:6px; border:1px solid #ccc;">Criticidad</th><th style="padding:6px; border:1px solid #ccc;">Estado</th></tr>`;
             datosMes.forEach(e => {
-                tablaEmail += `<tr><td style="padding:6px; border:1px solid #ccc;">${e.nombre}</td><td style="padding:6px; border:1px solid #ccc;">${e.estado}</td></tr>`;
+                let color = e.estado === 'Conforme' ? 'green' : e.estado === 'Desvío' ? 'red' : 'orange';
+                tablaEmail += `<tr><td style="padding:6px; border:1px solid #ccc;">${e.nombre}</td><td style="padding:6px; border:1px solid #ccc;">${e.codigo}</td><td style="padding:6px; border:1px solid #ccc;">${e.criticidad}</td><td style="padding:6px; border:1px solid #ccc; color:${color}; font-weight:bold;">${e.estado}</td></tr>`;
             });
             tablaEmail += '</table>';
 
@@ -1002,8 +1068,9 @@
                 to_email: emails.join(', '),
                 subject: `Planificación Verificación Tanques - ${mes} 2026 | Grupo Disal`,
                 message: `
-                    <h3 style="color:#1E3A8A;">Planificación Mensual - ${mes}</h3>
+                    <h3 style="color:#1E3A8A;">Planificación Mensual - ${mes} 2026</h3>
                     <p>Estimados, se adjunta la planificación de verificaciones correspondiente al mes de <strong>${mes}</strong>.</p>
+                    <p><strong>Total equipos:</strong> ${datosMes.length}</p>
                     ${tablaEmail}
                     <p style="margin-top:15px; font-size:11px; color:#666;">${msgAdd}</p>
                     <hr>
